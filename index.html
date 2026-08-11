@@ -12,84 +12,68 @@
             --primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --accent: #6366f1; --dark: #0f172a; --gray: #64748b;
             --danger: #ef4444; --warning: #f59e0b; --success: #10b981;
-            --radius: 20px;
+            --radius: 24px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; padding: 40px 20px; line-height: 1.6; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; padding: 40px 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
 
-        /* Header */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         h1 { font-size: 32px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; }
-        
-        /* Buttons */
-        .btn { cursor: pointer; border: none; padding: 12px 20px; border-radius: 14px; font-weight: 700; font-size: 13px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-p { background: var(--primary); color: white; box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2); }
-        .btn-ghost { background: #f1f5f9; color: var(--gray); }
-        .btn-ghost:hover { background: #e2e8f0; color: var(--dark); }
-        .btn-toggle { background: white; border: 1px solid #e2e8f0; color: var(--gray); }
 
-        /* Client Grouping */
-        .client-group { margin-bottom: 50px; }
-        .client-header { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-        .client-header::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; }
+        /* MAIN LAYOUT 70/30 */
+        .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media (min-width: 900px) {
+            .dashboard-wrapper { grid-template-columns: 7fr 3fr; }
+        }
 
-        /* Grid System */
-        .project-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        /* SIDEBAR / NEWSFEED */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-card { background: white; border-radius: var(--radius); padding: 24px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        @media (min-width: 768px) { .project-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1100px) { .project-grid { grid-template-columns: repeat(3, 1fr); } }
-        
-        /* Expanded Card spans all columns */
-        .card.expanded { grid-column: 1 / -1; }
+        /* ANALOG CLOCK (Vintage Style) */
+        .clock-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; background: var(--dark); color: white; }
+        .clock {
+            width: 150px; height: 150px; border: 4px solid white; border-radius: 50%;
+            position: relative; margin-bottom: 15px;
+        }
+        .clock::after { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; border-radius: 10px; background: white; }
+        .hour { width: 4px; height: 40px; z-index: 3; }
+        .min { width: 3px; height: 60px; z-index: 2; }
+        .sec { width: 1px; height: 65px; background: var(--danger); z-index: 1; }
 
-        /* Card Styles */
-        .card { background: white; border-radius: var(--radius); border: 1px solid #e2e8f0; transition: all 0.3s ease; overflow: hidden; position: relative; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        /* STATS & NEWSFEED */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .stat-item { background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #f1f5f9; }
+        .stat-label { font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase; }
+        .stat-val { font-size: 14px; font-weight: 800; color: var(--dark); margin-top: 4px; }
+        .urgent-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-weight: 600; }
+
+        /* PROJECT CARDS (Single Column Focus) */
+        .card { background: white; border-radius: var(--radius); border: 1px solid #e2e8f0; margin-bottom: 16px; transition: 0.3s; overflow: hidden; }
         .card-header { padding: 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .card-body { display: none; padding: 0 24px 30px 24px; border-top: 1px solid #f1f5f9; background: #fcfdfe; }
+        .card-body { display: none; padding: 0 24px 24px 24px; border-top: 1px solid #f1f5f9; background: #fcfdfe; }
         .card.expanded .card-body { display: block; }
-
-        /* Grading Borders */
         .grading-yellow { border-left: 10px solid var(--warning) !important; }
         .grading-red { border-left: 10px solid var(--danger) !important; }
-        .grading-complete { border-left: 10px solid var(--success) !important; opacity: 0.8; }
+        .grading-complete { border-left: 10px solid var(--success) !important; opacity: 0.7; }
 
-        .project-title { font-weight: 800; font-size: 18px; color: var(--dark); }
-        .project-meta { font-size: 11px; color: var(--gray); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; }
-        .rem-info { font-weight: bold; color: var(--dark); padding: 2px 6px; background: #fffbeb; border-radius: 4px; }
-
-        /* Content Constraints: Supaya kalau melebar gak melar banget */
-        .inner-content { max-width: 800px; } 
-
-        .section-title { font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin: 30px 0 12px 0; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-        
-        /* Task & Invoice Rows */
-        .item-row { 
-            background: white; padding: 12px 16px; border-radius: 14px; margin-bottom: 8px; 
-            display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; 
-            transition: 0.2s;
-        }
-        .item-row:hover { border-color: #e2e8f0; transform: translateX(4px); }
-        .text-content { flex: 1; font-weight: 600; font-size: 14px; color: var(--dark); }
-        .text-content.done { text-decoration: line-through; opacity: 0.4; }
+        /* BUTTONS & INPUTS */
+        .btn { cursor: pointer; border: none; padding: 12px 20px; border-radius: 14px; font-weight: 700; font-size: 13px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-p { background: var(--primary); color: white; }
+        .btn-ghost { background: #f1f5f9; color: var(--gray); }
+        .btn-toggle { background: white; border: 1px solid #e2e8f0; }
 
         input, textarea { width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid #f1f5f9; font-size: 14px; font-family: inherit; }
-        input:focus { border-color: var(--accent); outline: none; }
-
-        /* Status & Badges */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.4); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 32px; border-radius: 24px; width: 95%; max-width: 450px; }
+        #progress-bar { height: 4px; background: var(--primary); position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
         .badge { padding: 5px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .pending { background: #fff1f2; color: #e11d48; }
         .paid { background: #f0fdf4; color: #16a34a; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.4); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 32px; border-radius: 24px; width: 95%; max-width: 450px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        
-        #progress-bar { height: 4px; background: var(--primary); position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
-        .flex-row { display: flex; gap: 10px; margin-top: 10px; }
-        .arrow-icon { transition: 0.3s; font-size: 12px; color: var(--gray); }
-        .card.expanded .arrow-icon { transform: rotate(180deg); }
+        .item-row { background: white; padding: 12px; border-radius: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; border: 1px solid #f1f5f9; }
     </style>
 </head>
 <body>
@@ -105,68 +89,82 @@
         </div>
     </header>
 
-    <div id="projectList">
-        <div style="text-align: center; padding: 100px; color: var(--gray);">Menghubungkan ke Cloud...</div>
+    <div class="dashboard-wrapper">
+        <!-- GRID KIRI: PROJECT LIST -->
+        <div id="projectListSection">
+            <div id="projectList">
+                <div style="text-align: center; padding: 100px; color: var(--gray);">Loading database...</div>
+            </div>
+        </div>
+
+        <!-- GRID KANAN: SIDEBAR & ANALOG CLOCK -->
+        <div class="sidebar">
+            <!-- VINTAGE CLOCK -->
+            <div class="sidebar-card clock-box">
+                <div class="clock">
+                    <div class="hand hour" id="hourHand"></div>
+                    <div class="hand min" id="minHand"></div>
+                    <div class="hand sec" id="secHand"></div>
+                </div>
+                <div id="digitalTime" style="font-weight: 800; font-size: 18px; letter-spacing: 2px;">00:00:00</div>
+                <div style="font-size: 10px; color: #94a3b8; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px;">Stay Productive</div>
+            </div>
+
+            <!-- MONEY STATS -->
+            <div class="sidebar-card">
+                <div style="font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase;">💰 Money Overview</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Paid</div>
+                        <div class="stat-val" id="totalPaid">IDR 0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-val" id="totalPending" style="color:var(--danger)">IDR 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEWSFEED / URGENT -->
+            <div class="sidebar-card">
+                <div style="font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase;">⚠️ Woy, Buruan! (Urgent)</div>
+                <div id="urgentFeed" style="margin-top:10px;">
+                    <p style="font-size: 12px; color:gray">Semua aman, santai dulu...</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Modal Create Project -->
-<div id="projectModal" class="modal">
-    <div class="modal-content">
-        <h2 style="font-weight:800; margin-bottom:20px">Project Baru 🚀</h2>
-        <input type="text" id="pName" placeholder="Nama Project">
-        <input type="text" id="pClient" placeholder="Nama Client" style="margin-top:12px">
-        <div class="flex-row" style="margin-top:15px">
-            <div style="flex:1"><label style="font-size:10px;font-weight:800">START</label><input type="date" id="pStart"></div>
-            <div style="flex:1"><label style="font-size:10px;font-weight:800">END</label><input type="date" id="pEnd"></div>
-        </div>
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:30px">
-            <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
-            <button class="btn btn-p" onclick="createProject()">Gassken!</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Edit Task -->
-<div id="editTaskModal" class="modal">
-    <div class="modal-content">
-        <h3 style="font-weight:800; margin-bottom:15px">Edit Tugas 📌</h3>
-        <input type="text" id="editTaskText">
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px">
-            <button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button>
-            <button class="btn btn-p" id="saveEditTaskBtn">Simpan</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Edit Invoice -->
-<div id="editInvModal" class="modal">
-    <div class="modal-content">
-        <h3 style="font-weight:800; margin-bottom:15px">Edit Termin 💸</h3>
-        <input type="text" id="editInvLabel" style="margin-bottom:12px">
-        <input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px">
-            <button class="btn btn-ghost" onclick="closeEditInvModal()">Batal</button>
-            <button class="btn btn-p" id="saveEditInvBtn">Simpan</button>
-        </div>
-    </div>
-</div>
+<!-- MODALS (Sama seperti sebelumnya) -->
+<div id="projectModal" class="modal"><div class="modal-content"><h2 style="font-weight:800; margin-bottom:20px">Project Baru 🚀</h2><input type="text" id="pName" placeholder="Nama Project"><input type="text" id="pClient" placeholder="Nama Client" style="margin-top:12px"><div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:10px;font-weight:800">START</label><input type="date" id="pStart"></div><div style="flex:1"><label style="font-size:10px;font-weight:800">END</label><input type="date" id="pEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:12px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal()">Batal</button><button class="btn btn-p" onclick="createProject()">Gassken!</button></div></div></div>
+<div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Tugas</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px"><button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button><button class="btn btn-p" id="saveEditTaskBtn">Simpan</button></div></div></div>
+<div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:12px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px"><button class="btn btn-ghost" onclick="closeEditInvModal()">Batal</button><button class="btn btn-p" id="saveEditInvBtn">Simpan</button></div></div></div>
 
 <script>
-    // --- GANTI DENGAN URL & KEY KAMU ---
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
-
     const sb = supabase.createClient(SB_URL, SB_KEY);
+
     let projects = [];
     let showCompleted = false;
 
+    // --- ANALOG CLOCK LOGIC ---
+    function updateClock() {
+        const now = new Date();
+        const s = now.getSeconds();
+        const m = now.getMinutes();
+        const h = now.getHours();
+        document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${s * 6}deg)`;
+        document.getElementById('minHand').style.transform = `translateX(-50%) rotate(${m * 6}deg)`;
+        document.getElementById('hourHand').style.transform = `translateX(-50%) rotate(${h * 30 + m / 2}deg)`;
+        document.getElementById('digitalTime').innerText = now.toLocaleTimeString('en-GB');
+    }
+    setInterval(updateClock, 1000);
+
+    // --- CORE APP LOGIC ---
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
-    const openModal = () => {
-        document.getElementById('pName').value = ""; document.getElementById('pClient').value = "";
-        document.getElementById('pStart').value = ""; document.getElementById('pEnd').value = "";
-        document.getElementById('projectModal').style.display = 'flex';
-    };
+    const openModal = () => { document.querySelectorAll('#projectModal input').forEach(i=>i.value=""); document.getElementById('projectModal').style.display = 'flex'; };
     const closeModal = () => document.getElementById('projectModal').style.display = 'none';
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
 
@@ -174,22 +172,19 @@
         loader(true);
         const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: false });
         if (!error) { 
-            const currentExp = projects.filter(p => p.expanded).map(p => p.id);
-            projects = data.map(p => ({ ...p, expanded: currentExp.includes(p.id) })); 
+            const exp = projects.filter(p => p.expanded).map(p => p.id);
+            projects = data.map(p => ({ ...p, expanded: exp.includes(p.id) })); 
             render(); 
+            updateSummary();
         }
         loader(false);
     }
 
-    async function updateDB(id, payload) {
-        loader(true);
-        await sb.from('projects').update(payload).eq('id', id);
-        loader(false);
-    }
+    async function updateDB(id, payload) { await sb.from('projects').update(payload).eq('id', id); }
 
     async function createProject() {
         const name = document.getElementById('pName').value;
-        if (!name) return alert("Nama wajib diisi!");
+        if (!name) return;
         await sb.from('projects').insert([{
             name, client: document.getElementById('pClient').value || "No Client",
             start_date: document.getElementById('pStart').value, end_date: document.getElementById('pEnd').value,
@@ -198,82 +193,42 @@
         closeModal(); loadData();
     }
 
-    async function handleTask(pId, tId, act) {
-        const p = projects.find(x => x.id === pId);
-        if (act === 'add') {
-            const v = document.getElementById(`tIn-${pId}`).value;
-            if(!v) return;
-            p.tasks.push({ id: Date.now(), text: v, done: false });
-            document.getElementById(`tIn-${pId}`).value = "";
-        } else if (act === 'toggle') {
-            const t = p.tasks.find(x => x.id.toString() === tId.toString());
-            t.done = !t.done;
-        } else if (act === 'del') {
-            p.tasks = p.tasks.filter(x => x.id.toString() !== tId.toString());
+    // --- SUMMARY & NEWSFEED LOGIC ---
+    function updateSummary() {
+        let paid = 0, pending = 0, urgentList = [];
+        const today = new Date().setHours(0,0,0,0);
+
+        projects.forEach(p => {
+            // Calc Money
+            p.invoices.forEach(i => {
+                if(i.status === 'Paid') paid += parseInt(i.amount);
+                else pending += parseInt(i.amount);
+            });
+            // Calc Urgent
+            if(!p.is_completed && p.reminder_date) {
+                const diff = Math.ceil((new Date(p.reminder_date) - today) / 86400000);
+                if(diff <= 10) urgentList.push({ name: p.name, days: diff });
+            }
+        });
+
+        document.getElementById('totalPaid').innerText = "IDR " + formatRupiah(paid);
+        document.getElementById('totalPending').innerText = "IDR " + formatRupiah(pending);
+
+        const feed = document.getElementById('urgentFeed');
+        if(urgentList.length === 0) {
+            feed.innerHTML = `<p style="font-size: 12px; color:gray">Semua aman, santai dulu...</p>`;
+        } else {
+            feed.innerHTML = urgentList.map(u => `
+                <div class="urgent-item">
+                    <span style="color:${u.days <= 0 ? 'var(--danger)' : 'var(--warning)'}">●</span>
+                    <div style="flex:1">${u.name}</div>
+                    <div style="font-size:10px; color:gray">${u.days <= 0 ? 'OVERDUE' : u.days + ' hari lagi'}</div>
+                </div>
+            `).join('');
         }
-        await updateDB(pId, { tasks: p.tasks }); render();
     }
 
-    let curT = {}, curI = {};
-    function openEditTaskModal(pId, tId) {
-        const p = projects.find(x => x.id === pId);
-        const t = p.tasks.find(x => x.id.toString() === tId.toString());
-        curT = { pId, tId: t.id };
-        document.getElementById('editTaskText').value = t.text;
-        document.getElementById('editTaskModal').style.display = 'flex';
-        document.getElementById('saveEditTaskBtn').onclick = saveEditTask;
-    }
-    function closeEditTaskModal() { document.getElementById('editTaskModal').style.display = 'none'; }
-    async function saveEditTask() {
-        const p = projects.find(x => x.id === curT.pId);
-        const t = p.tasks.find(x => x.id.toString() === curT.tId.toString());
-        t.text = document.getElementById('editTaskText').value;
-        await updateDB(curT.pId, { tasks: p.tasks }); 
-        closeEditTaskModal(); render();
-    }
-
-    async function handleInv(pId, iId, act) {
-        const p = projects.find(x => x.id === pId);
-        if (act === 'add') {
-            const l = document.getElementById(`iL-${pId}`).value;
-            const a = document.getElementById(`iA-${pId}`).value;
-            if(!l || !a) return;
-            p.invoices.push({ id: Date.now(), label: l, amount: a.replace(/\./g, ''), status: 'Pending' });
-            document.getElementById(`iL-${pId}`).value = ""; document.getElementById(`iA-${pId}`).value = "";
-        } else if (act === 'toggle') {
-            const i = p.invoices.find(x => x.id.toString() === iId.toString());
-            i.status = (i.status === 'Pending' ? 'Paid' : 'Pending');
-        } else if (act === 'del') {
-            p.invoices = p.invoices.filter(x => x.id.toString() !== iId.toString());
-        }
-        await updateDB(pId, { invoices: p.invoices }); render();
-    }
-
-    function openEditInvModal(pId, iId) {
-        const p = projects.find(x => x.id === pId);
-        const i = p.invoices.find(x => x.id.toString() === iId.toString());
-        curI = { pId, iId: i.id };
-        document.getElementById('editInvLabel').value = i.label;
-        document.getElementById('editInvAmount').value = formatRupiah(i.amount);
-        document.getElementById('editInvModal').style.display = 'flex';
-        document.getElementById('saveEditInvBtn').onclick = saveEditInv;
-    }
-    function closeEditInvModal() { document.getElementById('editInvModal').style.display = 'none'; }
-    async function saveEditInv() {
-        const p = projects.find(x => x.id === curI.pId);
-        const i = p.invoices.find(x => x.id.toString() === curI.iId.toString());
-        i.label = document.getElementById('editInvLabel').value;
-        i.amount = document.getElementById('editInvAmount').value.replace(/\./g, '');
-        await updateDB(curI.pId, { invoices: p.invoices }); 
-        closeEditInvModal(); render();
-    }
-
-    function toggleShowCompleted() {
-        showCompleted = !showCompleted;
-        document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done";
-        render();
-    }
-
+    // --- RENDERER ---
     function getGrading(p) {
         if (p.is_completed) return 'grading-complete';
         if (!p.reminder_date) return '';
@@ -284,11 +239,7 @@
     function render() {
         const container = document.getElementById('projectList');
         const filtered = projects.filter(p => showCompleted ? true : !p.is_completed);
-        
-        if (filtered.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:100px; color:var(--gray)"><h3>Kosong Nih 🏝️</h3></div>`;
-            return;
-        }
+        if (filtered.length === 0) { container.innerHTML = `<div style="text-align:center; padding:50px; color:gray">Kosong melompong...</div>`; return; }
 
         const grouped = filtered.reduce((acc, p) => {
             const c = p.client || "No Client";
@@ -297,9 +248,9 @@
 
         let html = "";
         for (const client in grouped) {
-            html += `<div class="client-group"><div class="client-header">${client}</div><div class="project-grid">`;
+            html += `<div class="client-group"><div class="client-header">${client}</div>`;
             html += grouped[client].map(p => `
-                <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}" id="card-${p.id}">
+                <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}">
                     <div class="card-header" onclick="projects.find(x=>x.id==='${p.id}').expanded=!projects.find(x=>x.id==='${p.id}').expanded; render();">
                         <div>
                             <div class="project-title">${p.is_completed ? '✅ ' : ''}${p.name}</div>
@@ -308,72 +259,102 @@
                                 ${p.reminder_date ? `<span class="rem-info">🔔 Remind: ${p.reminder_date}</span>` : ''}
                             </div>
                         </div>
-                        <div class="arrow-icon">▼</div>
+                        <div style="font-size:18px">${p.expanded ? '▲' : '▼'}</div>
                     </div>
                     <div class="card-body">
-                        <div class="inner-content">
+                        <div style="max-width: 800px;">
                             <div class="section-title">⏰ Reminder Follow-up</div>
                             <div class="flex-row" style="align-items:center">
-                                <input type="date" value="${p.reminder_date || ''}" onchange="updateDB('${p.id}', { reminder_date: this.value }).then(()=>loadData())" style="max-width:300px">
-                                <small style="color:var(--gray)">Kuning H-10, Merah Hari-H.</small>
+                                <input type="date" value="${p.reminder_date || ''}" onchange="updateDB('${p.id}', { reminder_date: this.value }).then(()=>loadData())" style="max-width:250px">
                             </div>
-
                             <div class="section-title">📌 Tasks</div>
-                            <div id="tasks-${p.id}">
-                                ${p.tasks.map(t => `
-                                    <div class="item-row">
-                                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
-                                        <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
-                                        <div style="display:flex; gap:8px">
-                                            <button class="btn btn-ghost btn-sm" onclick="openEditTaskModal('${p.id}', '${t.id}')" style="padding:4px 8px">✎</button>
-                                            <button class="btn btn-ghost btn-sm" onclick="handleTask('${p.id}', '${t.id}', 'del')" style="padding:4px 8px">×</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
+                            ${p.tasks.map(t => `
+                                <div class="item-row">
+                                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
+                                    <span class="text-content ${t.done ? 'done' : ''}" style="flex:1">${t.text}</span>
+                                    <button class="btn btn-ghost btn-sm" onclick="openEditTaskModal('${p.id}', '${t.id}')">✎</button>
+                                    <button class="btn btn-ghost btn-sm" onclick="handleTask('${p.id}', '${t.id}', 'del')">×</button>
+                                </div>
+                            `).join('')}
                             <div class="flex-row">
                                 <input type="text" id="tIn-${p.id}" placeholder="Tambah tugas..." onkeypress="if(event.key==='Enter') handleTask('${p.id}', null, 'add')">
                                 <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}', null, 'add')">Add</button>
                             </div>
-
                             <div class="section-title">💸 Invoicing</div>
-                            <div id="invoices-${p.id}">
-                                ${p.invoices.map(i => `
-                                    <div class="item-row">
-                                        <div style="flex:1">
-                                            <span style="font-size:13px; font-weight:600">${i.label}</span>
-                                            <span style="color:var(--accent); font-weight:800; margin-left:10px">IDR ${formatRupiah(i.amount)}</span>
-                                        </div>
-                                        <span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', '${i.id}', 'toggle')">${i.status}</span>
-                                        <div style="display:flex; gap:8px">
-                                            <button class="btn btn-ghost btn-sm" onclick="openEditInvModal('${p.id}', '${i.id}')" style="padding:4px 8px">✎</button>
-                                            <button class="btn btn-ghost btn-sm" onclick="handleInv('${p.id}', '${i.id}', 'del')" style="padding:4px 8px">×</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
+                            <div style="background:white; border-radius:18px; padding:10px; border:1px solid #f1f5f9; margin-bottom:10px">
+                                <table style="width:100%; border-collapse:collapse; font-size:13px">
+                                    ${p.invoices.map(i => `
+                                        <tr style="border-bottom:1px solid #f1f5f9">
+                                            <td style="padding:10px 5px">${i.label}</td>
+                                            <td style="font-weight:800; color:var(--accent)">IDR ${formatRupiah(i.amount)}</td>
+                                            <td><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', '${i.id}', 'toggle')">${i.status}</span></td>
+                                            <td style="text-align:right">
+                                                <button class="btn btn-ghost btn-sm" onclick="openEditInvModal('${p.id}', '${i.id}')">✎</button>
+                                                <button class="btn btn-ghost btn-sm" onclick="handleInv('${p.id}', '${i.id}', 'del')">×</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </table>
                             </div>
                             <div class="flex-row">
                                 <input type="text" id="iL-${p.id}" placeholder="Label" style="flex:2">
                                 <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
                                 <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}', null, 'add')">Save</button>
                             </div>
-
                             <div class="section-title">📝 Notes</div>
-                            <textarea onblur="updateDB('${p.id}', { notes: this.value })" placeholder="Link aset, brief, password...">${p.notes || ''}</textarea>
-
+                            <textarea onblur="updateDB('${p.id}', { notes: this.value })" placeholder="Notes...">${p.notes || ''}</textarea>
                             <div style="display:flex; justify-content:space-between; margin-top:40px">
-                                <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus permanen?')) sb.from('projects').delete().eq('id', '${p.id}').then(()=>loadData())">Hapus Project</button>
-                                <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="updateDB('${p.id}', { is_completed: !${p.is_completed} }).then(()=>loadData())">
-                                    ${p.is_completed ? 'Buka Lagi' : 'Complete ✅'}
-                                </button>
+                                <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('projects').delete().eq('id', '${p.id}').then(()=>loadData())">Hapus</button>
+                                <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="updateDB('${p.id}', { is_completed: !${p.is_completed} }).then(()=>loadData())">${p.is_completed ? 'Buka Lagi' : 'Complete ✅'}</button>
                             </div>
                         </div>
                     </div>
                 </div>`).join('');
-            html += `</div></div>`;
+            html += `</div>`;
         }
         container.innerHTML = html;
     }
+
+    // Modal Edit Boilerplate (Reuse logic)
+    let curT={}, curI={};
+    function openEditTaskModal(pId, tId) {
+        const t = projects.find(x=>x.id===pId).tasks.find(x=>x.id.toString()===tId.toString());
+        curT={pId, tId:t.id}; document.getElementById('editTaskText').value=t.text;
+        document.getElementById('editTaskModal').style.display='flex';
+        document.getElementById('saveEditTaskBtn').onclick=async()=>{
+            const p=projects.find(x=>x.id===curT.pId); p.tasks.find(x=>x.id.toString()===curT.tId.toString()).text=document.getElementById('editTaskText').value;
+            await updateDB(curT.pId,{tasks:p.tasks}); document.getElementById('editTaskModal').style.display='none'; render();
+        };
+    }
+    function closeEditTaskModal(){ document.getElementById('editTaskModal').style.display='none'; }
+    function openEditInvModal(pId, iId) {
+        const i = projects.find(x=>x.id===pId).invoices.find(x=>x.id.toString()===iId.toString());
+        curI={pId, iId:i.id}; document.getElementById('editInvLabel').value=i.label;
+        document.getElementById('editInvAmount').value=formatRupiah(i.amount);
+        document.getElementById('editInvModal').style.display='flex';
+        document.getElementById('saveEditInvBtn').onclick=async()=>{
+            const p=projects.find(x=>x.id===curI.pId); const inv=p.invoices.find(x=>x.id.toString()===curI.iId.toString());
+            inv.label=document.getElementById('editInvLabel').value; inv.amount=document.getElementById('editInvAmount').value.replace(/\./g,'');
+            await updateDB(curI.pId,{invoices:p.invoices}); document.getElementById('editInvModal').style.display='none'; render();
+        };
+    }
+    function closeEditInvModal(){ document.getElementById('editInvModal').style.display='none'; }
+
+    async function handleTask(pId, tId, act) {
+        const p = projects.find(x=>x.id===pId);
+        if(act==='add'){ const v=document.getElementById(`tIn-${pId}`).value; if(!v) return; p.tasks.push({id:Date.now(),text:v,done:false}); document.getElementById(`tIn-${pId}`).value=""; }
+        else if(act==='toggle'){ const t=p.tasks.find(x=>x.id.toString()===tId.toString()); t.done=!t.done; }
+        else if(act==='del'){ p.tasks=p.tasks.filter(x=>x.id.toString()!==tId.toString()); }
+        await updateDB(pId,{tasks:p.tasks}); render();
+    }
+    async function handleInv(pId, iId, act) {
+        const p = projects.find(x=>x.id===pId);
+        if(act==='add'){ const l=document.getElementById(`iL-${pId}`).value, a=document.getElementById(`iA-${pId}`).value; if(!l || !a) return; p.invoices.push({id:Date.now(),label:l,amount:a.replace(/\./g,''),status:'Pending'}); document.getElementById(`iL-${pId}`).value=""; document.getElementById(`iA-${pId}`).value=""; }
+        else if(act==='toggle'){ const i=p.invoices.find(x=>x.id.toString()===iId.toString()); i.status=(i.status==='Pending'?'Paid':'Pending'); }
+        else if(act==='del'){ p.invoices=p.invoices.filter(x=>x.id.toString()!==iId.toString()); }
+        await updateDB(pId,{invoices:p.invoices}); render(); updateSummary();
+    }
+    function toggleShowCompleted(){ showCompleted=!showCompleted; document.getElementById('toggleShowBtn').innerText=showCompleted?"Hide Done":"Show Done"; render(); }
 
     loadData();
 </script>
