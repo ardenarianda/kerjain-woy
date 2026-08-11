@@ -114,7 +114,16 @@
     let showCompleted = false;
 
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
-    const openModal = () => document.getElementById('projectModal').style.display = 'flex';
+    const openModal = () => {
+        // Kosongkan semua input sebelum modal muncul
+        document.getElementById('pName').value = "";
+        document.getElementById('pClient').value = "";
+        document.getElementById('pStart').value = "";
+        document.getElementById('pEnd').value = "";
+        
+        // Tampilkan modal
+        document.getElementById('projectModal').style.display = 'flex';
+    };
     const closeModal = () => document.getElementById('projectModal').style.display = 'none';
 
     function formatRupiah(a) { return !a ? "0" : new Intl.NumberFormat('id-ID').format(a); }
@@ -138,17 +147,38 @@
     }
 
     async function createProject() {
-        const name = document.getElementById('pName').value;
-        if (!name) return alert("Nama project wajib!");
+        const nameInput = document.getElementById('pName');
+        const clientInput = document.getElementById('pClient');
+        const startInput = document.getElementById('pStart');
+        const endInput = document.getElementById('pEnd');
+    
+        if (!nameInput.value) return alert("Nama project wajib diisi!");
+    
         loader(true);
-        await sb.from('projects').insert([{
-            name, client: document.getElementById('pClient').value || "No Client",
-            start_date: document.getElementById('pStart').value,
-            end_date: document.getElementById('pEnd').value,
-            is_completed: false, tasks: [], invoices: [], notes: ""
+        const { error } = await sb.from('projects').insert([{
+            name: nameInput.value,
+            client: clientInput.value || "No Client",
+            start_date: startInput.value,
+            end_date: endInput.value,
+            is_completed: false,
+            tasks: [],
+            invoices: [],
+            notes: ""
         }]);
-        closeModal();
-        loadData();
+    
+        if (error) {
+            alert("Gagal simpan: " + error.message);
+        } else {
+            // Kosongkan kolom setelah berhasil simpan
+            nameInput.value = "";
+            clientInput.value = "";
+            startInput.value = "";
+            endInput.value = "";
+            
+            closeModal();
+            loadData();
+        }
+        loader(false);
     }
 
     function toggleShowCompleted() {
