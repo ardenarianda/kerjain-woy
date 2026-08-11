@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerjain Woy! 🔥</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --glass: rgba(255, 255, 255, 0.7);
+            --primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --accent: #ec4899;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius: 24px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.05) 0px, transparent 50%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            background: var(--primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Buttons */
+        .btn {
+            cursor: pointer; border: none; padding: 12px 24px; border-radius: 16px;
+            font-weight: 700; font-size: 14px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-p { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
+        .btn-p:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.3); }
+        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 10px; }
+        .btn-ghost { background: transparent; color: var(--gray); }
+        .btn-ghost:hover { background: rgba(0,0,0,0.05); color: var(--danger); }
+
+        /* Card Modern Glassmorphism */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 45px rgba(0,0,0,0.08); }
+
+        .card-header { padding: 28px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .project-title { font-weight: 800; font-size: 22px; }
+        .project-meta { font-size: 13px; color: var(--gray); margin-top: 5px; display: flex; gap: 15px; }
+
+        .card-body { display: none; padding: 0 28px 28px 28px; border-top: 1px solid rgba(0,0,0,0.03); animation: slideDown 0.3s ease; }
+        .card.expanded .card-body { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-size: 12px; font-weight: 800; color: var(--gray); text-transform: uppercase;
+            letter-spacing: 1.5px; margin: 30px 0 15px 0; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* Elements */
+        .item-row {
+            background: white; padding: 14px 18px; border-radius: 18px;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 15px;
+            transition: 0.2s; border: 1px solid transparent;
+        }
+        .item-row:hover { border-color: #e2e8f0; transform: scale(1.01); }
+        
+        .check-box { width: 22px; height: 22px; border-radius: 8px; cursor: pointer; accent-color: #6366f1; }
+        .text-content { flex: 1; font-weight: 600; font-size: 15px; }
+        .text-content.done { text-decoration: line-through; opacity: 0.4; }
+
+        input, textarea {
+            width: 100%; padding: 14px 18px; border-radius: 16px; border: 2px solid #f1f5f9;
+            font-family: inherit; font-size: 14px; transition: 0.3s;
+        }
+        input:focus { border-color: #6366f1; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+        .badge {
+            padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 800;
+            cursor: pointer; text-transform: uppercase;
+        }
+        .pending { background: #fff1f2; color: #e11d48; }
+        .paid { background: #f0fdf4; color: #16a34a; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px; }
+
+        #progress-bar { height: 4px; background: var(--primary); position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
+    </style>
+
+<!-- Link ke Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Meta tag untuk tampilan mobile -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<script>
+  // Daftarin Service Worker supaya bisa di-install
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+</script>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div class="container">
+    <header>
+        <h1>Kerjain Woy! 🔥</h1>
+        <button class="btn btn-p" onclick="openModal()">+ New Project</button>
+    </header>
+
+    <div id="projectList">
+        <div style="text-align: center; padding: 50px; color: gray;">Sabar, lagi ngonekin ke cloud...</div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="projectModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Project Baru 🚀</h2>
+        <input type="text" id="pName" placeholder="Nama Project (e.g. Website Branding)" style="margin-bottom:12px">
+        <input type="text" id="pClient" placeholder="Siapa Client-nya?" style="margin-bottom:12px">
+        <div style="display:flex; gap:12px; margin-bottom:25px">
+            <div style="flex:1">
+                <label style="font-size:11px; font-weight:800; color:var(--gray)">START</label>
+                <input type="date" id="pStart">
+            </div>
+            <div style="flex:1">
+                <label style="font-size:11px; font-weight:800; color:var(--gray)">DEADLINE</label>
+                <input type="date" id="pEnd">
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:12px">
+            <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+            <button class="btn btn-p" onclick="createProject()">Gassken!</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // === KONFIGURASI SUPABASE ===
+    const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; // <-- MASUKKAN KEY KAMU DI SINI!
+
+    const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+    let projects = [];
+
+    // === CORE LOGIC ===
+    const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
+    const openModal = () => document.getElementById('projectModal').style.display = 'flex';
+    const closeModal = () => document.getElementById('projectModal').style.display = 'none';
+
+    async function loadData() {
+        loader(true);
+        const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+        if (!error) { projects = data; render(); }
+        loader(false);
+    }
+
+    async function updateDB(id, payload) {
+        loader(true);
+        await supabaseClient.from('projects').update(payload).eq('id', id);
+        loader(false);
+    }
+
+    async function createProject() {
+        const name = document.getElementById('pName').value;
+        if (!name) return alert("Kasih nama projectnya dong!");
+        loader(true);
+        await supabaseClient.from('projects').insert([{
+            name, client: document.getElementById('pClient').value,
+            start_date: document.getElementById('pStart').value,
+            end_date: document.getElementById('pEnd').value,
+            tasks: [], invoices: [], notes: "", expanded: true
+        }]);
+        closeModal();
+        loadData();
+    }
+
+    async function deleteProject(id) {
+        if (confirm("Yakin mau hapus permanen dari cloud?")) {
+            await supabaseClient.from('projects').delete().eq('id', id);
+            loadData();
+        }
+    }
+
+    // === SUB-ACTIONS (TASKS & INVOICES) ===
+    async function handleTask(pId, tId = null, action = 'add') {
+        const p = projects.find(x => x.id === pId);
+        if (action === 'add') {
+            const val = document.getElementById(`tIn-${pId}`).value;
+            if (!val) return;
+            p.tasks.push({ id: Date.now(), text: val, done: false });
+        } else if (action === 'toggle') {
+            const t = p.tasks.find(x => x.id === tId);
+            t.done = !t.done;
+        } else if (action === 'del') {
+            p.tasks = p.tasks.filter(x => x.id !== tId);
+        } else if (action === 'edit') {
+            const t = p.tasks.find(x => x.id === tId);
+            const newVal = prompt("Ubah tugas:", t.text);
+            if (newVal) t.text = newVal;
+        }
+        await updateDB(pId, { tasks: p.tasks });
+        render();
+    }
+
+    async function handleInv(pId, iId = null, action = 'add') {
+        const p = projects.find(x => x.id === pId);
+        if (action === 'add') {
+            const l = document.getElementById(`iL-${pId}`).value;
+            const a = document.getElementById(`iA-${pId}`).value;
+            if (!l || !a) return;
+            p.invoices.push({ id: Date.now(), label: l, amount: a, status: 'Pending' });
+        } else if (action === 'toggle') {
+            const i = p.invoices.find(x => x.id === iId);
+            i.status = i.status === 'Pending' ? 'Paid' : 'Pending';
+        } else if (action === 'del') {
+            p.invoices = p.invoices.filter(x => x.id !== iId);
+        }
+        await updateDB(pId, { invoices: p.invoices });
+        render();
+    }
+
+    // === RENDERER ===
+    function render() {
+        const container = document.getElementById('projectList');
+        if (projects.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:60px; background:var(--glass); border-radius:30px; border:2px dashed #cbd5e1">
+                <h3 style="font-weight:800">Kosong Melompong 🏝️</h3>
+                <p style="color:var(--gray); margin-top:10px">Yuk, tambah project baru biar cuan!</p>
+            </div>`;
+            return;
+        }
+
+        container.innerHTML = projects.map(p => `
+            <div class="card ${p.expanded ? 'expanded' : ''}" id="card-${p.id}">
+                <div class="card-header" onclick="document.getElementById('card-${p.id}').classList.toggle('expanded')">
+                    <div>
+                        <div class="project-title">${p.name}</div>
+                        <div class="project-meta">
+                            <span>🤝 ${p.client || 'No Client'}</span>
+                            <span>⏳ ${p.end_date || 'No Deadline'}</span>
+                        </div>
+                    </div>
+                    <div style="font-size:20px; color:var(--gray)">⌄</div>
+                </div>
+
+                <div class="card-body">
+                    <div class="section-title">📌 Checklist Tugas</div>
+                    ${p.tasks.map(t => `
+                        <div class="item-row">
+                            <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', ${t.id}, 'toggle')">
+                            <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
+                            <div style="display:flex; gap:5px">
+                                <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', ${t.id}, 'edit')">✎</button>
+                                <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', ${t.id}, 'del')">×</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                    <div style="display:flex; gap:10px; margin-top:15px">
+                        <input type="text" id="tIn-${p.id}" placeholder="Next step apa?" onkeypress="if(event.key==='Enter') handleTask('${p.id}')">
+                        <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
+                    </div>
+
+                    <div class="section-title">💸 Invoicing</div>
+                    <div style="background:white; border-radius:20px; padding:10px; margin-bottom:15px">
+                        <table style="width:100%; border-collapse:collapse">
+                            ${p.invoices.map(i => `
+                                <tr style="border-bottom:1px solid #f1f5f9">
+                                    <td style="padding:12px; font-weight:600">${i.label}</td>
+                                    <td style="padding:12px; font-weight:800; color:#4f46e5">IDR ${i.amount}</td>
+                                    <td style="padding:12px"><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', ${i.id}, 'toggle')">${i.status}</span></td>
+                                    <td style="padding:12px; text-align:right">
+                                        <button class="btn btn-sm btn-ghost" onclick="handleInv('${p.id}', ${i.id}, 'del')">×</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                    </div>
+                    <div style="display:flex; gap:10px">
+                        <input type="text" id="iL-${p.id}" placeholder="Label Termin" style="flex:2">
+                        <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1">
+                        <button class="btn btn-sm" onclick="handleInv('${p.id}')">Simpan</button>
+                    </div>
+
+                    <div class="section-title">📝 Notes</div>
+                    <textarea placeholder="Link briefing, password, atau coretan..." onblur="updateDB('${p.id}', { notes: this.value })">${p.notes || ''}</textarea>
+
+                    <div style="text-align:right; margin-top:30px">
+                        <button class="btn btn-sm btn-ghost" onclick="deleteProject('${p.id}')" style="font-weight:800; color:var(--danger)">HAPUS PROJECT</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    loadData();
+</script>
+</body>
+</html>
