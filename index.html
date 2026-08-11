@@ -50,6 +50,15 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Grouping Styles */
+        .client-group { margin-bottom: 40px; }
+        .client-header { 
+            font-size: 14px; font-weight: 800; color: #6366f1; 
+            text-transform: uppercase; letter-spacing: 2px; 
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+        }
+        .client-header::after { content: ""; flex: 1; height: 1px; background: rgba(0,0,0,0.05); }
+
         /* Buttons */
         .btn {
             cursor: pointer; border: none; padding: 12px 24px; border-radius: 16px;
@@ -70,18 +79,17 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: var(--radius);
-            margin-bottom: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
             transition: all 0.4s ease;
             overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 45px rgba(0,0,0,0.08); }
 
-        .card-header { padding: 28px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .project-title { font-weight: 800; font-size: 22px; }
+        .card-header { padding: 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .project-title { font-weight: 800; font-size: 20px; }
         .project-meta { font-size: 13px; color: var(--gray); margin-top: 5px; display: flex; gap: 15px; }
 
-        .card-body { display: none; padding: 0 28px 28px 28px; border-top: 1px solid rgba(0,0,0,0.03); animation: slideDown 0.3s ease; }
+        .card-body { display: none; padding: 0 24px 24px 24px; border-top: 1px solid rgba(0,0,0,0.03); animation: slideDown 0.3s ease; }
         .card.expanded .card-body { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -117,26 +125,18 @@
 
         /* Modal */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px; }
+        .modal-content { background: white; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
 
         #progress-bar { height: 4px; background: var(--primary); position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
+
+        table { width: 100%; border-collapse: collapse; }
+        .table-container { background: white; border-radius: 20px; padding: 10px; margin-bottom: 15px; }
+        .flex-row { display: flex; gap: 10px; margin-top: 15px; }
     </style>
 
-<!-- Link ke Manifest -->
-<link rel="manifest" href="manifest.json">
-
-<!-- Meta tag untuk tampilan mobile -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<script>
-  // Daftarin Service Worker supaya bisa di-install
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js');
-    });
-  }
-</script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
@@ -153,7 +153,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Create Project -->
 <div id="projectModal" class="modal">
     <div class="modal-content">
         <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Project Baru 🚀</h2>
@@ -176,23 +176,73 @@
     </div>
 </div>
 
+<!-- Modal Edit Invoice -->
+<div id="editInvModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Edit Termin 💸</h2>
+        <input type="text" id="editInvLabel" placeholder="Nama Termin" style="margin-bottom:12px">
+        <input type="text" id="editInvAmount" placeholder="Nominal" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
+            <button class="btn btn-ghost" onclick="closeEditInvModal()">Batal</button>
+            <button class="btn btn-p" id="saveEditInvBtn">Simpan</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // === KONFIGURASI SUPABASE ===
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
-    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; // <-- MASUKKAN KEY KAMU DI SINI!
+    const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
 
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let projects = [];
+    let currentEditState = { pId: null, iId: null };
 
-    // === CORE LOGIC ===
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const openModal = () => document.getElementById('projectModal').style.display = 'flex';
     const closeModal = () => document.getElementById('projectModal').style.display = 'none';
 
+    // Format Rupiah
+    const formatRupiah = (angka) => {
+        if (!angka) return "0";
+        return new Intl.NumberFormat('id-ID').format(angka);
+    };
+
+    // Modal Edit Invoice Logic
+    function openEditInvModal(pId, iId) {
+        const p = projects.find(x => x.id === pId);
+        const i = p.invoices.find(x => x.id === iId);
+        currentEditState = { pId, iId };
+        document.getElementById('editInvLabel').value = i.label;
+        document.getElementById('editInvAmount').value = formatRupiah(i.amount);
+        document.getElementById('editInvModal').style.display = 'flex';
+        document.getElementById('saveEditInvBtn').onclick = saveEditInv;
+    }
+    function closeEditInvModal() { document.getElementById('editInvModal').style.display = 'none'; }
+
+    async function saveEditInv() {
+        const { pId, iId } = currentEditState;
+        const p = projects.find(x => x.id === pId);
+        const i = p.invoices.find(x => x.id === iId);
+        const newL = document.getElementById('editInvLabel').value;
+        const newA = document.getElementById('editInvAmount').value;
+        if (newL && newA) {
+            i.label = newL;
+            i.amount = newA.replace(/\./g, '');
+            await updateDB(pId, { invoices: p.invoices });
+            closeEditInvModal();
+            render();
+        }
+    }
+
     async function loadData() {
         loader(true);
         const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
-        if (!error) { projects = data; render(); }
+        if (!error) { 
+            // Default semua collapse (tertutup) saat pertama buka
+            projects = data.map(p => ({ ...p, expanded: false })); 
+            render(); 
+        }
         loader(false);
     }
 
@@ -204,63 +254,49 @@
 
     async function createProject() {
         const name = document.getElementById('pName').value;
-        if (!name) return alert("Kasih nama projectnya dong!");
+        if (!name) return alert("Isi nama projectnya!");
         loader(true);
         await supabaseClient.from('projects').insert([{
-            name, client: document.getElementById('pClient').value,
+            name, client: document.getElementById('pClient').value || "No Client",
             start_date: document.getElementById('pStart').value,
             end_date: document.getElementById('pEnd').value,
-            tasks: [], invoices: [], notes: "", expanded: true
+            tasks: [], invoices: [], notes: "", expanded: false
         }]);
         closeModal();
         loadData();
     }
 
     async function deleteProject(id) {
-        if (confirm("Yakin mau hapus permanen dari cloud?")) {
+        if (confirm("Hapus project permanen?")) {
             await supabaseClient.from('projects').delete().eq('id', id);
             loadData();
         }
     }
 
-    // === SUB-ACTIONS (TASKS & INVOICES) ===
     async function handleTask(pId, tId = null, action = 'add') {
         const p = projects.find(x => x.id === pId);
         if (action === 'add') {
             const val = document.getElementById(`tIn-${pId}`).value;
             if (!val) return;
             p.tasks.push({ id: Date.now(), text: val, done: false });
+            document.getElementById(`tIn-${pId}`).value = "";
         } else if (action === 'toggle') {
             const t = p.tasks.find(x => x.id === tId);
             t.done = !t.done;
         } else if (action === 'del') {
             p.tasks = p.tasks.filter(x => x.id !== tId);
-        } else if (action === 'edit') {
-            const t = p.tasks.find(x => x.id === tId);
-            const newVal = prompt("Ubah tugas:", t.text);
-            if (newVal) t.text = newVal;
         }
         await updateDB(pId, { tasks: p.tasks });
         render();
     }
 
-    // 2. Fungsi Handle Invoice (Sudah Bagus)
     async function handleInv(pId, iId = null, action = 'add') {
         const p = projects.find(x => x.id === pId);
         if (action === 'add') {
             const l = document.getElementById(`iL-${pId}`).value;
             let a = document.getElementById(`iA-${pId}`).value;
             if (!l || !a) return;
-            
-            // Simpan angka bersih tanpa titik ke database
-            p.invoices.push({ 
-                id: Date.now(), 
-                label: l, 
-                amount: a.replace(/\./g, ''), 
-                status: 'Pending' 
-            });
-            
-            // Kosongkan input setelah simpan
+            p.invoices.push({ id: Date.now(), label: l, amount: a.replace(/\./g, ''), status: 'Pending' });
             document.getElementById(`iL-${pId}`).value = "";
             document.getElementById(`iA-${pId}`).value = "";
         } else if (action === 'toggle') {
@@ -273,107 +309,100 @@
         render();
     }
 
-    // 3. Fungsi Edit Invoice (Sedikit polesan di bagian prompt)
-    async function editInv(pId, iId) {
-        const p = projects.find(x => x.id === pId);
-        const i = p.invoices.find(x => x.id === iId);
-        
-        const newLabel = prompt("Ubah Nama Termin:", i.label);
-        // Tampilkan nominal yang sudah ber-titik di prompt supaya user nyaman
-        const newAmount = prompt("Ubah Nominal (Angka saja):", formatRupiah(i.amount));
-        
-        if (newLabel !== null && newAmount !== null && newLabel !== "" && newAmount !== "") {
-            i.label = newLabel;
-            // Tetap bersihkan titik sebelum masuk ke database
-            i.amount = newAmount.replace(/\./g, ''); 
-            await updateDB(pId, { invoices: p.invoices });
-            render();
-        }
+    function toggleCard(pId) {
+        projects = projects.map(p => {
+            if (p.id === pId) p.expanded = !p.expanded;
+            return p;
+        });
+        render();
     }
 
-    // Fungsi untuk bikin titik (separator ribuan)
-        const formatRupiah = (angka) => {
-            if (!angka) return "0";
-            return new Intl.NumberFormat('id-ID').format(angka);
-        };
-    // === RENDERER ===
     function render() {
         const container = document.getElementById('projectList');
         if (projects.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:60px; background:var(--glass); border-radius:30px; border:2px dashed #cbd5e1">
-                <h3 style="font-weight:800">Kosong Melompong 🏝️</h3>
-                <p style="color:var(--gray); margin-top:10px">Yuk, tambah project baru biar cuan!</p>
-            </div>`;
+            container.innerHTML = `<div style="text-align:center; padding:60px; background:var(--glass); border-radius:30px; border:2px dashed #cbd5e1"><h3>Kosong Melompong 🏝️</h3></div>`;
             return;
         }
 
-        container.innerHTML = projects.map(p => `
-            <div class="card ${p.expanded ? 'expanded' : ''}" id="card-${p.id}">
-                <div class="card-header" onclick="document.getElementById('card-${p.id}').classList.toggle('expanded')">
-                    <div>
-                        <div class="project-title">${p.name}</div>
-                        <div class="project-meta">
-                            <span>🤝 ${p.client || 'No Client'}</span>
-                            <span>⏳ ${p.end_date || 'No Deadline'}</span>
-                        </div>
-                    </div>
-                    <div style="font-size:20px; color:var(--gray)">⌄</div>
-                </div>
+        // Grouping Logika
+        const grouped = projects.reduce((acc, p) => {
+            const client = p.client || "No Client";
+            if (!acc[client]) acc[client] = [];
+            acc[client].push(p);
+            return acc;
+        }, {});
 
-                <div class="card-body">
-                    <div class="section-title">📌 Checklist Tugas</div>
-                    ${p.tasks.map(t => `
-                        <div class="item-row">
-                            <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', ${t.id}, 'toggle')">
-                            <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
-                            <div style="display:flex; gap:5px">
-                                <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', ${t.id}, 'edit')">✎</button>
-                                <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', ${t.id}, 'del')">×</button>
+        let html = "";
+        for (const client in grouped) {
+            html += `
+            <div class="client-group">
+                <div class="client-header">${client}</div>
+                ${grouped[client].map(p => `
+                    <div class="card ${p.expanded ? 'expanded' : ''}" id="card-${p.id}">
+                        <div class="card-header" onclick="toggleCard('${p.id}')">
+                            <div>
+                                <div class="project-title">${p.name}</div>
+                                <div class="project-meta"><span>⏳ Deadline: ${p.end_date || '-'}</span></div>
+                            </div>
+                            <div style="font-size:20px; color:var(--gray); transition:0.3s; transform:${p.expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">⌄</div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="section-title">📌 Checklist Tugas</div>
+                            ${p.tasks.map(t => `
+                                <div class="item-row">
+                                    <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', ${t.id}, 'toggle')">
+                                    <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
+                                    <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', ${t.id}, 'del')">×</button>
+                                </div>
+                            `).join('')}
+                            <div class="flex-row">
+                                <input type="text" id="tIn-${p.id}" placeholder="Input tugas baru..." onkeypress="if(event.key==='Enter') handleTask('${p.id}')">
+                                <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
+                            </div>
+
+                            <div class="section-title">💸 Money Tracker</div>
+                            <div class="table-container">
+                                <table>
+                                    ${p.invoices.map(i => `
+                                        <tr style="border-bottom:1px solid #f1f5f9">
+                                            <td style="padding:12px; font-weight:600">${i.label}</td>
+                                            <td style="padding:12px; font-weight:800; color:#4f46e5">IDR ${formatRupiah(i.amount)}</td>
+                                            <td style="padding:12px"><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', ${i.id}, 'toggle')">${i.status}</span></td>
+                                            <td style="padding:12px; text-align:right; display:flex; gap:5px; justify-content:flex-end">
+                                                <button class="btn btn-sm btn-ghost" onclick="openEditInvModal('${p.id}', '${i.id}')">✎</button>
+                                                <button class="btn btn-sm btn-ghost" onclick="handleInv('${p.id}', ${i.id}, 'del')">×</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </table>
+                            </div>
+                            <div class="flex-row">
+                                <input type="text" id="iL-${p.id}" placeholder="Label Termin" style="flex:2">
+                                <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" 
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+                                <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}')">Simpan</button>
+                            </div>
+
+                            <div class="section-title">📝 Notes</div>
+                            <textarea placeholder="Catatan project..." onblur="updateDB('${p.id}', { notes: this.value })">${p.notes || ''}</textarea>
+
+                            <div style="text-align:right; margin-top:30px">
+                                <button class="btn btn-sm btn-ghost" onclick="deleteProject('${p.id}')" style="font-weight:800; color:var(--danger)">HAPUS PROJECT</button>
                             </div>
                         </div>
-                    `).join('')}
-                    <div style="display:flex; gap:10px; margin-top:15px">
-                        <input type="text" id="tIn-${p.id}" placeholder="Next step apa?" onkeypress="if(event.key==='Enter') handleTask('${p.id}')">
-                        <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
                     </div>
-
-                   <!-- Bagian Tabel Invoicing -->
-                    <div class="table-container">
-                        <table>
-                            ${p.invoices.map(i => `
-                                <tr style="border-bottom:1px solid #f1f5f9">
-                                    <td style="padding:12px; font-weight:600">${i.label}</td>
-                                    <td style="padding:12px; font-weight:800; color:#4f46e5">IDR ${formatRupiah(i.amount)}</td>
-                                    <td style="padding:12px"><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', ${i.id}, 'toggle')">${i.status}</span></td>
-                                    <td style="padding:12px; text-align:right; display:flex; gap:5px; justify-content:flex-end">
-                                        <button class="btn btn-sm btn-ghost" onclick="editInv('${p.id}', ${i.id})">✎</button>
-                                        <button class="btn btn-sm btn-ghost" onclick="handleInv('${p.id}', ${i.id}, 'del')">×</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </table>
-                    </div>
-
-                    <!-- Input Baris Baru (Ganti bagian input nominal kamu jadi yang ini) -->
-                    <div style="display:flex; gap:10px">
-                        <input type="text" id="iL-${p.id}" placeholder="Label Termin" style="flex:2">
-                        <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" 
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-                        <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}')">Ok</button>
-                    </div>
-                    
-                    <div class="section-title">📝 Notes</div>
-                    <textarea placeholder="Link briefing, password, atau coretan..." onblur="updateDB('${p.id}', { notes: this.value })">${p.notes || ''}</textarea>
-
-                    <div style="text-align:right; margin-top:30px">
-                        <button class="btn btn-sm btn-ghost" onclick="deleteProject('${p.id}')" style="font-weight:800; color:var(--danger)">HAPUS PROJECT</button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+                `).join('')}
+            </div>`;
+        }
+        container.innerHTML = html;
     }
 
     loadData();
+    
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
+    }
 </script>
 </body>
 </html>
