@@ -244,13 +244,25 @@
         render();
     }
 
+    // 2. Fungsi Handle Invoice (Sudah Bagus)
     async function handleInv(pId, iId = null, action = 'add') {
         const p = projects.find(x => x.id === pId);
         if (action === 'add') {
             const l = document.getElementById(`iL-${pId}`).value;
-            const a = document.getElementById(`iA-${pId}`).value;
+            let a = document.getElementById(`iA-${pId}`).value;
             if (!l || !a) return;
-            p.invoices.push({ id: Date.now(), label: l, amount: a, status: 'Pending' });
+            
+            // Simpan angka bersih tanpa titik ke database
+            p.invoices.push({ 
+                id: Date.now(), 
+                label: l, 
+                amount: a.replace(/\./g, ''), 
+                status: 'Pending' 
+            });
+            
+            // Kosongkan input setelah simpan
+            document.getElementById(`iL-${pId}`).value = "";
+            document.getElementById(`iA-${pId}`).value = "";
         } else if (action === 'toggle') {
             const i = p.invoices.find(x => x.id === iId);
             i.status = i.status === 'Pending' ? 'Paid' : 'Pending';
@@ -261,6 +273,29 @@
         render();
     }
 
+    // 3. Fungsi Edit Invoice (Sedikit polesan di bagian prompt)
+    async function editInv(pId, iId) {
+        const p = projects.find(x => x.id === pId);
+        const i = p.invoices.find(x => x.id === iId);
+        
+        const newLabel = prompt("Ubah Nama Termin:", i.label);
+        // Tampilkan nominal yang sudah ber-titik di prompt supaya user nyaman
+        const newAmount = prompt("Ubah Nominal (Angka saja):", formatRupiah(i.amount));
+        
+        if (newLabel !== null && newAmount !== null && newLabel !== "" && newAmount !== "") {
+            i.label = newLabel;
+            // Tetap bersihkan titik sebelum masuk ke database
+            i.amount = newAmount.replace(/\./g, ''); 
+            await updateDB(pId, { invoices: p.invoices });
+            render();
+        }
+    }
+
+    // Fungsi untuk bikin titik (separator ribuan)
+        const formatRupiah = (angka) => {
+            if (!angka) return "0";
+            return new Intl.NumberFormat('id-ID').format(angka);
+        };
     // === RENDERER ===
     function render() {
         const container = document.getElementById('projectList');
@@ -302,27 +337,31 @@
                         <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
                     </div>
 
-                    <div class="section-title">💸 Invoicing</div>
-                    <div style="background:white; border-radius:20px; padding:10px; margin-bottom:15px">
-                        <table style="width:100%; border-collapse:collapse">
+                   <!-- Bagian Tabel Invoicing -->
+                    <div class="table-container">
+                        <table>
                             ${p.invoices.map(i => `
                                 <tr style="border-bottom:1px solid #f1f5f9">
                                     <td style="padding:12px; font-weight:600">${i.label}</td>
-                                    <td style="padding:12px; font-weight:800; color:#4f46e5">IDR ${i.amount}</td>
+                                    <td style="padding:12px; font-weight:800; color:#4f46e5">IDR ${formatRupiah(i.amount)}</td>
                                     <td style="padding:12px"><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', ${i.id}, 'toggle')">${i.status}</span></td>
-                                    <td style="padding:12px; text-align:right">
+                                    <td style="padding:12px; text-align:right; display:flex; gap:5px; justify-content:flex-end">
+                                        <button class="btn btn-sm btn-ghost" onclick="editInv('${p.id}', ${i.id})">✎</button>
                                         <button class="btn btn-sm btn-ghost" onclick="handleInv('${p.id}', ${i.id}, 'del')">×</button>
                                     </td>
                                 </tr>
                             `).join('')}
                         </table>
                     </div>
+
+                    <!-- Input Baris Baru (Ganti bagian input nominal kamu jadi yang ini) -->
                     <div style="display:flex; gap:10px">
                         <input type="text" id="iL-${p.id}" placeholder="Label Termin" style="flex:2">
-                        <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1">
-                        <button class="btn btn-sm" onclick="handleInv('${p.id}')">Simpan</button>
+                        <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+                        <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}')">Ok</button>
                     </div>
-
+                    
                     <div class="section-title">📝 Notes</div>
                     <textarea placeholder="Link briefing, password, atau coretan..." onblur="updateDB('${p.id}', { notes: this.value })">${p.notes || ''}</textarea>
 
