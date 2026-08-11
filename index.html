@@ -190,6 +190,18 @@
     </div>
 </div>
 
+<!-- Modal Edit Tugas -->
+<div id="editTaskModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Edit Tugas 📌</h2>
+        <input type="text" id="editTaskText" placeholder="Nama Tugas">
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
+            <button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button>
+            <button class="btn btn-p" id="saveEditTaskBtn">Simpan</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
@@ -303,6 +315,36 @@
         render();
     }
 
+    let currentEditTaskState = { pId: null, tId: null };
+
+    function openEditTaskModal(pId, tId) {
+        const p = projects.find(x => x.id === pId);
+        const t = p.tasks.find(x => x.id.toString() === tId.toString());
+        
+        if (!t) return;
+        
+        currentEditTaskState = { pId, tId: t.id };
+        document.getElementById('editTaskText').value = t.text;
+        document.getElementById('editTaskModal').style.display = 'flex';
+        document.getElementById('saveEditTaskBtn').onclick = saveEditTask;
+    }
+    
+    function closeEditTaskModal() { document.getElementById('editTaskModal').style.display = 'none'; }
+    
+    async function saveEditTask() {
+        const { pId, tId } = currentEditTaskState;
+        const p = projects.find(x => x.id === pId);
+        const t = p.tasks.find(x => x.id.toString() === tId.toString());
+        
+        const newVal = document.getElementById('editTaskText').value;
+        if (newVal) {
+            t.text = newVal;
+            await updateDB(pId, { tasks: p.tasks });
+            closeEditTaskModal();
+            render();
+        }
+    }
+    
     async function handleInv(pId, iId = null, action = 'add') {
         const p = projects.find(x => x.id === pId);
         if (action === 'add') {
@@ -362,13 +404,16 @@
 
                         <div class="card-body">
                             <div class="section-title">📌 Checklist Tugas</div>
-                            ${p.tasks.map(t => `
-                                <div class="item-row">
-                                    <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', ${t.id}, 'toggle')">
-                                    <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
-                                    <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', ${t.id}, 'del')">×</button>
-                                </div>
-                            `).join('')}
+                                ${p.tasks.map(t => `
+                                    <div class="item-row">
+                                        <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
+                                        <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
+                                        <div style="display:flex; gap:5px">
+                                            <button class="btn btn-sm btn-ghost" onclick="openEditTaskModal('${p.id}', '${t.id}')">✎</button>
+                                            <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', '${t.id}', 'del')">×</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
                             <div class="flex-row">
                                 <input type="text" id="tIn-${p.id}" placeholder="Input tugas baru..." onkeypress="if(event.key==='Enter') handleTask('${p.id}')">
                                 <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
