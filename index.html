@@ -17,47 +17,59 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; padding: 40px 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* Grading Borders */
-        .grading-yellow { border-left: 10px solid var(--warning) !important; }
-        .grading-red { border-left: 10px solid var(--danger) !important; }
-        .grading-complete { border-left: 10px solid var(--success) !important; opacity: 0.8; }
-
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 15px; }
-        h1 { font-size: 28px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .client-group { margin-bottom: 40px; }
-        .client-header { font-size: 12px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .client-header::after { content: ""; flex: 1; height: 1px; background: rgba(0,0,0,0.1); }
-
-        .btn { cursor: pointer; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 700; font-size: 13px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-p { background: var(--primary); color: white; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px; }
+        h1 { font-size: 32px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1.5px; }
+        
+        .btn { cursor: pointer; border: none; padding: 12px 24px; border-radius: 16px; font-weight: 700; font-size: 14px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn:active { transform: scale(0.95); }
+        .btn-p { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
         .btn-ghost { background: transparent; color: var(--gray); }
         .btn-toggle { background: white; border: 1px solid #ddd; }
 
-        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: var(--radius); margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.5); transition: 0.3s; overflow: hidden; }
-        .card-header { padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .client-group { margin-bottom: 50px; }
+        .client-header { font-size: 13px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .client-header::after { content: ""; flex: 1; height: 1px; background: rgba(0,0,0,0.1); }
+
+        .project-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+        @media (min-width: 850px) {
+            .project-grid { grid-template-columns: repeat(2, 1fr); }
+            .card.expanded { grid-column: span 2; }
+        }
+        @media (min-width: 1150px) {
+            .project-grid { grid-template-columns: repeat(3, 1fr); }
+            .card.expanded { grid-column: span 3; }
+        }
+
+        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.5); transition: all 0.3s ease; overflow: hidden; position: relative; }
+        .card-header { padding: 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 24px 24px 24px; border-top: 1px solid rgba(0,0,0,0.03); }
         .card.expanded .card-body { display: block; }
 
-        .project-title { font-weight: 800; font-size: 18px; }
-        .project-meta { font-size: 11px; color: var(--gray); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; }
-        
-        .section-title { font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin: 25px 0 10px 0; display: flex; align-items: center; gap: 8px; }
-        .item-row { background: white; padding: 12px 16px; border-radius: 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
-        .text-content.done { text-decoration: line-through; opacity: 0.5; }
+        .grading-yellow { border-left: 10px solid var(--warning) !important; }
+        .grading-red { border-left: 10px solid var(--danger) !important; }
+        .grading-complete { border-left: 10px solid var(--success) !important; opacity: 0.7; }
 
-        input, textarea { width: 100%; padding: 12px; border-radius: 14px; border: 2px solid #f1f5f9; font-size: 14px; }
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 30px; border-radius: 28px; width: 90%; max-width: 450px; }
-        
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .project-title { font-weight: 800; font-size: 19px; }
+        .project-meta { font-size: 12px; color: var(--gray); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .rem-info { font-weight: bold; color: var(--dark); }
+
+        .section-title { font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin: 30px 0 12px 0; display: flex; align-items: center; gap: 8px; }
+        .item-row { background: white; padding: 14px; border-radius: 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; border: 1px solid transparent; }
+        .text-content.done { text-decoration: line-through; opacity: 0.4; }
+
+        input, textarea { width: 100%; padding: 14px; border-radius: 16px; border: 2px solid #f1f5f9; font-size: 14px; font-family: inherit; }
+        .badge { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .pending { background: #fff1f2; color: #e11d48; }
         .paid { background: #f0fdf4; color: #16a34a; }
-        
+
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 35px; border-radius: 30px; width: 95%; max-width: 450px; }
         #progress-bar { height: 4px; background: var(--primary); position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
-        .rem-info { font-weight: bold; color: #000; }
+        .flex-row { display: flex; gap: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -67,72 +79,77 @@
 <div class="container">
     <header>
         <h1>Kerjain Woy! 🔥</h1>
-        <div style="display:flex; gap:10px">
+        <div style="display:flex; gap:12px">
             <button class="btn btn-toggle" id="toggleShowBtn" onclick="toggleShowCompleted()">Show Done</button>
             <button class="btn btn-p" onclick="openModal()">+ New Project</button>
         </div>
     </header>
-
-    <div id="projectList">
-        <div style="text-align: center; padding: 50px; color: gray;">Loading database...</div>
-    </div>
+    <div id="projectList"></div>
 </div>
 
-<!-- Modal Create Project -->
+<!-- Modal Project -->
 <div id="projectModal" class="modal">
     <div class="modal-content">
-        <h2 style="font-weight:800; margin-bottom:15px">Project Baru 🚀</h2>
+        <h2 style="font-weight:800; margin-bottom:20px">Project Baru 🚀</h2>
         <input type="text" id="pName" placeholder="Nama Project">
-        <input type="text" id="pClient" placeholder="Nama Client" style="margin-top:10px">
-        <div style="display:flex; gap:10px; margin-top:15px">
-            <div style="flex:1">
-                <label style="font-size:10px; font-weight:800; color:var(--gray)">START DATE</label>
-                <input type="date" id="pStart">
-            </div>
-            <div style="flex:1">
-                <label style="font-size:10px; font-weight:800; color:var(--gray)">END DATE</label>
-                <input type="date" id="pEnd">
-            </div>
+        <input type="text" id="pClient" placeholder="Nama Client" style="margin-top:12px">
+        <div class="flex-row">
+            <div style="flex:1"><label style="font-size:10px;font-weight:800">START</label><input type="date" id="pStart"></div>
+            <div style="flex:1"><label style="font-size:10px;font-weight:800">END</label><input type="date" id="pEnd"></div>
         </div>
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px">
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:30px">
             <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
-            <button class="btn btn-p" onclick="createProject()">Gassken!</button>
+            <button class="btn btn-p" onclick="createProject()">Simpan</button>
         </div>
     </div>
 </div>
 
-<!-- Modal Edit Tasks & Invoices (Reuse existing logic) -->
-<div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Tugas</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button><button class="btn btn-p" id="saveEditTaskBtn">Simpan</button></div></div></div>
-<div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:10px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeEditInvModal()">Batal</button><button class="btn btn-p" id="saveEditInvBtn">Simpan</button></div></div></div>
+<!-- Modal Edit Task -->
+<div id="editTaskModal" class="modal">
+    <div class="modal-content">
+        <h3 style="font-weight:800; margin-bottom:15px">Edit Tugas 📌</h3>
+        <input type="text" id="editTaskText">
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px">
+            <button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button>
+            <button class="btn btn-p" id="saveEditTaskBtn">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Invoice -->
+<div id="editInvModal" class="modal">
+    <div class="modal-content">
+        <h3 style="font-weight:800; margin-bottom:15px">Edit Termin 💸</h3>
+        <input type="text" id="editInvLabel" style="margin-bottom:12px">
+        <input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:25px">
+            <button class="btn btn-ghost" onclick="closeEditInvModal()">Batal</button>
+            <button class="btn btn-p" id="saveEditInvBtn">Simpan</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
-
     const sb = supabase.createClient(SB_URL, SB_KEY);
+
     let projects = [];
     let showCompleted = false;
-
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
+
     const openModal = () => {
-        // Kosongkan semua input sebelum modal muncul
-        document.getElementById('pName').value = "";
-        document.getElementById('pClient').value = "";
-        document.getElementById('pStart').value = "";
-        document.getElementById('pEnd').value = "";
-        
-        // Tampilkan modal
+        document.getElementById('pName').value = ""; document.getElementById('pClient').value = "";
+        document.getElementById('pStart').value = ""; document.getElementById('pEnd').value = "";
         document.getElementById('projectModal').style.display = 'flex';
     };
     const closeModal = () => document.getElementById('projectModal').style.display = 'none';
-
-    function formatRupiah(a) { return !a ? "0" : new Intl.NumberFormat('id-ID').format(a); }
+    const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
 
     async function loadData() {
         loader(true);
         const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: false });
         if (!error) { 
-            // Pertahankan status expanded saat ini agar tidak ketutup sendiri saat sync
             const currentExpanded = projects.filter(p => p.expanded).map(p => p.id);
             projects = data.map(p => ({ ...p, expanded: currentExpanded.includes(p.id) })); 
             render(); 
@@ -147,53 +164,23 @@
     }
 
     async function createProject() {
-        const nameInput = document.getElementById('pName');
-        const clientInput = document.getElementById('pClient');
-        const startInput = document.getElementById('pStart');
-        const endInput = document.getElementById('pEnd');
-    
-        if (!nameInput.value) return alert("Nama project wajib diisi!");
-    
-        loader(true);
-        const { error } = await sb.from('projects').insert([{
-            name: nameInput.value,
-            client: clientInput.value || "No Client",
-            start_date: startInput.value,
-            end_date: endInput.value,
-            is_completed: false,
-            tasks: [],
-            invoices: [],
-            notes: ""
+        const name = document.getElementById('pName').value;
+        if (!name) return alert("Nama wajib!");
+        await sb.from('projects').insert([{
+            name, client: document.getElementById('pClient').value || "No Client",
+            start_date: document.getElementById('pStart').value, end_date: document.getElementById('pEnd').value,
+            is_completed: false, tasks: [], invoices: [], notes: ""
         }]);
-    
-        if (error) {
-            alert("Gagal simpan: " + error.message);
-        } else {
-            // Kosongkan kolom setelah berhasil simpan
-            nameInput.value = "";
-            clientInput.value = "";
-            startInput.value = "";
-            endInput.value = "";
-            
-            closeModal();
-            loadData();
-        }
-        loader(false);
+        closeModal(); loadData();
     }
 
-    function toggleShowCompleted() {
-        showCompleted = !showCompleted;
-        document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done";
-        render();
-    }
-
-    // Task & Invoice Handlers (Logic tetap sama agar stabil)
     async function handleTask(pId, tId, act) {
         const p = projects.find(x => x.id === pId);
         if (act === 'add') {
             const v = document.getElementById(`tIn-${pId}`).value;
             if(!v) return;
             p.tasks.push({ id: Date.now(), text: v, done: false });
+            document.getElementById(`tIn-${pId}`).value = "";
         } else if (act === 'toggle') {
             const t = p.tasks.find(x => x.id.toString() === tId.toString());
             t.done = !t.done;
@@ -203,26 +190,32 @@
         await updateDB(pId, { tasks: p.tasks }); render();
     }
 
-    // Modal Edit Boilerplate
     let curT = {}, curI = {};
     function openEditTaskModal(pId, tId) {
-        const t = projects.find(x => x.id === pId).tasks.find(x => x.id.toString() === tId.toString());
-        curT = { pId, tId: t.id }; document.getElementById('editTaskText').value = t.text;
+        const p = projects.find(x => x.id === pId);
+        const t = p.tasks.find(x => x.id.toString() === tId.toString());
+        curT = { pId, tId: t.id };
+        document.getElementById('editTaskText').value = t.text;
         document.getElementById('editTaskModal').style.display = 'flex';
-        document.getElementById('saveEditTaskBtn').onclick = async () => {
-            const p = projects.find(x => x.id === curT.pId);
-            p.tasks.find(x => x.id === curT.tId).text = document.getElementById('editTaskText').value;
-            await updateDB(curT.pId, { tasks: p.tasks }); document.getElementById('editTaskModal').style.display = 'none'; render();
-        };
+        document.getElementById('saveEditTaskBtn').onclick = saveEditTask;
     }
     function closeEditTaskModal() { document.getElementById('editTaskModal').style.display = 'none'; }
+    async function saveEditTask() {
+        const p = projects.find(x => x.id === curT.pId);
+        const t = p.tasks.find(x => x.id.toString() === curT.tId.toString());
+        t.text = document.getElementById('editTaskText').value;
+        await updateDB(curT.pId, { tasks: p.tasks }); 
+        closeEditTaskModal(); render();
+    }
 
     async function handleInv(pId, iId, act) {
         const p = projects.find(x => x.id === pId);
         if (act === 'add') {
-            const l = document.getElementById(`iL-${pId}`).value, a = document.getElementById(`iA-${pId}`).value;
+            const l = document.getElementById(`iL-${pId}`).value;
+            const a = document.getElementById(`iA-${pId}`).value;
             if(!l || !a) return;
             p.invoices.push({ id: Date.now(), label: l, amount: a.replace(/\./g, ''), status: 'Pending' });
+            document.getElementById(`iL-${pId}`).value = ""; document.getElementById(`iA-${pId}`).value = "";
         } else if (act === 'toggle') {
             const i = p.invoices.find(x => x.id.toString() === iId.toString());
             i.status = (i.status === 'Pending' ? 'Paid' : 'Pending');
@@ -233,38 +226,42 @@
     }
 
     function openEditInvModal(pId, iId) {
-        const i = projects.find(x => x.id === pId).invoices.find(x => x.id.toString() === iId.toString());
-        curI = { pId, iId: i.id }; document.getElementById('editInvLabel').value = i.label;
+        const p = projects.find(x => x.id === pId);
+        const i = p.invoices.find(x => x.id.toString() === iId.toString());
+        curI = { pId, iId: i.id };
+        document.getElementById('editInvLabel').value = i.label;
         document.getElementById('editInvAmount').value = formatRupiah(i.amount);
         document.getElementById('editInvModal').style.display = 'flex';
-        document.getElementById('saveEditInvBtn').onclick = async () => {
-            const p = projects.find(x => x.id === curI.pId);
-            const inv = p.invoices.find(x => x.id === curI.iId);
-            inv.label = document.getElementById('editInvLabel').value;
-            inv.amount = document.getElementById('editInvAmount').value.replace(/\./g, '');
-            await updateDB(curI.pId, { invoices: p.invoices }); document.getElementById('editInvModal').style.display = 'none'; render();
-        };
+        document.getElementById('saveEditInvBtn').onclick = saveEditInv;
     }
     function closeEditInvModal() { document.getElementById('editInvModal').style.display = 'none'; }
+    async function saveEditInv() {
+        const p = projects.find(x => x.id === curI.pId);
+        const i = p.invoices.find(x => x.id.toString() === curI.iId.toString());
+        i.label = document.getElementById('editInvLabel').value;
+        i.amount = document.getElementById('editInvAmount').value.replace(/\./g, '');
+        await updateDB(curI.pId, { invoices: p.invoices }); 
+        closeEditInvModal(); render();
+    }
 
-    // Logic Grading
+    function toggleShowCompleted() {
+        showCompleted = !showCompleted;
+        document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done";
+        render();
+    }
+
     function getGrading(p) {
         if (p.is_completed) return 'grading-complete';
         if (!p.reminder_date) return '';
-        const today = new Date().setHours(0,0,0,0);
-        const rem = new Date(p.reminder_date).setHours(0,0,0,0);
-        const diff = Math.ceil((rem - today) / (86400000));
-        if (diff <= 0) return 'grading-red';
-        if (diff <= 10) return 'grading-yellow';
-        return '';
+        const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000);
+        return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : '');
     }
 
     function render() {
         const container = document.getElementById('projectList');
         const filtered = projects.filter(p => showCompleted ? true : !p.is_completed);
-        
         if (filtered.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:50px; color:gray">Kosong nih, kerjain woy!</div>`;
+            container.innerHTML = `<div style="text-align:center; padding:100px; color:gray"><h3>Kosong Melompong 🏝️</h3></div>`;
             return;
         }
 
@@ -275,79 +272,70 @@
 
         let html = "";
         for (const client in grouped) {
-            html += `<div class="client-group">
-                <div class="client-header">${client}</div>
-                ${grouped[client].map(p => `
-                    <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}" id="card-${p.id}">
-                        <div class="card-header" onclick="projects.find(x=>x.id==='${p.id}').expanded=!projects.find(x=>x.id==='${p.id}').expanded; render();">
-                            <div>
-                                <div class="project-title">${p.is_completed ? '✅ ' : ''}${p.name}</div>
-                                <div class="project-meta">
-                                    <span>📅 ${p.start_date || '-'} s/d ${p.end_date || '-'}</span>
-                                    ${p.reminder_date ? `<span class="rem-info">🔔 Remind: ${p.reminder_date}</span>` : ''}
-                                </div>
+            html += `<div class="client-group"><div class="client-header">${client}</div><div class="project-grid">`;
+            html += grouped[client].map(p => `
+                <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}" id="card-${p.id}">
+                    <div class="card-header" onclick="projects.find(x=>x.id==='${p.id}').expanded=!projects.find(x=>x.id==='${p.id}').expanded; render();">
+                        <div>
+                            <div class="project-title">${p.is_completed ? '✅ ' : ''}${p.name}</div>
+                            <div class="project-meta">
+                                <span>📅 ${p.start_date || '-'} s/d ${p.end_date || '-'}</span>
+                                ${p.reminder_date ? `<span class="rem-info">🔔 Remind: ${p.reminder_date}</span>` : ''}
                             </div>
-                            <div style="font-size:18px">${p.expanded ? '▲' : '▼'}</div>
                         </div>
-                        <div class="card-body">
-                            
-                            <div class="section-title">⏰ Reminder Follow-up</div>
-                            <div style="display:flex; gap:10px; align-items:center">
-                                <input type="date" value="${p.reminder_date || ''}" 
-                                    onchange="updateDB('${p.id}', { reminder_date: this.value }).then(()=>loadData())" 
-                                    style="flex:1">
-                                <small style="color:gray; flex:1">Ubah tanggal ini untuk atur jadwal reminder klien.</small>
+                        <div style="font-size:18px">${p.expanded ? '▲' : '▼'}</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="section-title">⏰ Reminder Follow-up</div>
+                        <div class="flex-row" style="align-items:center">
+                            <input type="date" value="${p.reminder_date || ''}" onchange="updateDB('${p.id}', { reminder_date: this.value }).then(()=>loadData())" style="flex:1">
+                            <small style="color:var(--gray); flex:1">Kuning H-10, Merah Hari-H.</small>
+                        </div>
+                        <div class="section-title">📌 Tasks</div>
+                        ${p.tasks.map(t => `
+                            <div class="item-row">
+                                <input type="checkbox" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
+                                <span class="text-content ${t.done ? 'done' : ''}" style="flex:1">${t.text}</span>
+                                <button class="btn btn-ghost btn-sm" onclick="openEditTaskModal('${p.id}', '${t.id}')">✎</button>
+                                <button class="btn btn-ghost btn-sm" onclick="handleTask('${p.id}', '${t.id}', 'del')">×</button>
                             </div>
-
-                            <div class="section-title">📌 Checklist Tugas</div>
-                            ${p.tasks.map(t => `
-                                <div class="item-row">
-                                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
-                                    <span class="text-content ${t.done ? 'done' : ''}" style="flex:1">${t.text}</span>
-                                    <button class="btn btn-ghost btn-sm" onclick="openEditTaskModal('${p.id}', '${t.id}')">✎</button>
-                                    <button class="btn btn-ghost btn-sm" onclick="handleTask('${p.id}', '${t.id}', 'del')">×</button>
-                                </div>
-                            `).join('')}
-                            <div style="display:flex; gap:10px; margin-top:10px">
-                                <input type="text" id="tIn-${p.id}" placeholder="Tambah tugas baru...">
-                                <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
-                            </div>
-
-                            <div class="section-title">💸 Invoicing</div>
-                            <div style="background:white; border-radius:18px; padding:10px; margin-bottom:10px">
-                                <table style="width:100%; border-collapse:collapse; font-size:13px">
-                                    ${p.invoices.map(i => `
-                                        <tr style="border-bottom:1px solid #f1f5f9">
-                                            <td style="padding:10px 5px">${i.label}</td>
-                                            <td style="font-weight:800">IDR ${formatRupiah(i.amount)}</td>
-                                            <td><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', '${i.id}', 'toggle')">${i.status}</span></td>
-                                            <td style="text-align:right">
-                                                <button class="btn btn-ghost btn-sm" onclick="openEditInvModal('${p.id}', '${i.id}')">✎</button>
-                                                <button class="btn btn-ghost btn-sm" onclick="handleInv('${p.id}', '${i.id}', 'del')">×</button>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </table>
-                            </div>
-                            <div style="display:flex; gap:10px">
-                                <input type="text" id="iL-${p.id}" placeholder="Termin" style="flex:2">
-                                <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-                                <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}')">Save</button>
-                            </div>
-
-                            <div class="section-title">📝 Notes</div>
-                            <textarea onblur="updateDB('${p.id}', { notes: this.value })" placeholder="Link aset, password, dll...">${p.notes || ''}</textarea>
-
-                            <div style="display:flex; justify-content:space-between; margin-top:30px">
-                                <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus permanen?')) sb.from('projects').delete().eq('id', '${p.id}').then(()=>loadData())">Hapus</button>
-                                <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="updateDB('${p.id}', { is_completed: !${p.is_completed} }).then(()=>loadData())">
-                                    ${p.is_completed ? 'Buka Lagi Project' : 'Selesai / Complete ✅'}
-                                </button>
-                            </div>
+                        `).join('')}
+                        <div class="flex-row">
+                            <input type="text" id="tIn-${p.id}" placeholder="Tambah tugas...">
+                            <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}', null, 'add')">Add</button>
+                        </div>
+                        <div class="section-title">💸 Invoicing</div>
+                        <div class="table-container">
+                            <table>
+                                ${p.invoices.map(i => `
+                                    <tr style="border-bottom:1px solid #f1f5f9">
+                                        <td style="padding:12px 5px">${i.label}</td>
+                                        <td style="font-weight:800; color:var(--accent)">IDR ${formatRupiah(i.amount)}</td>
+                                        <td><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', '${i.id}', 'toggle')">${i.status}</span></td>
+                                        <td style="text-align:right">
+                                            <button class="btn btn-ghost btn-sm" onclick="openEditInvModal('${p.id}', '${i.id}')">✎</button>
+                                            <button class="btn btn-ghost btn-sm" onclick="handleInv('${p.id}', '${i.id}', 'del')">×</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        </div>
+                        <div class="flex-row">
+                            <input type="text" id="iL-${p.id}" placeholder="Label" style="flex:2">
+                            <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+                            <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}', null, 'add')">Save</button>
+                        </div>
+                        <div class="section-title">📝 Notes</div>
+                        <textarea onblur="updateDB('${p.id}', { notes: this.value })" placeholder="Link aset, brief...">${p.notes || ''}</textarea>
+                        <div style="display:flex; justify-content:space-between; margin-top:40px">
+                            <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus permanen?')) sb.from('projects').delete().eq('id', '${p.id}').then(()=>loadData())">Hapus</button>
+                            <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="updateDB('${p.id}', { is_completed: !${p.is_completed} }).then(()=>loadData())">
+                                ${p.is_completed ? 'Buka Lagi' : 'Complete ✅'}
+                            </button>
                         </div>
                     </div>
-                `).join('')}
-            </div>`;
+                </div>`).join('');
+            html += `</div></div>`;
         }
         container.innerHTML = html;
     }
