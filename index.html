@@ -3,140 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kerjain Woy! 🔥</title>
+    <title>Kerjain Woy! Pro 🔥</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f0f2f5;
-            --glass: rgba(255, 255, 255, 0.7);
+            --bg: #f0f2f5; --glass: rgba(255, 255, 255, 0.7);
             --primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            --accent: #ec4899;
-            --dark: #0f172a;
-            --gray: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
+            --accent: #6366f1; --dark: #0f172a; --gray: #64748b;
+            --danger: #ef4444; --warning: #f59e0b; --success: #10b981;
             --radius: 24px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.05) 0px, transparent 50%);
-            color: var(--dark);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; padding: 40px 20px; }
         .container { max-width: 800px; margin: 0 auto; }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
+        /* Grading Border Styles */
+        .grading-yellow { border-left: 8px solid var(--warning) !important; }
+        .grading-red { border-left: 8px solid var(--danger) !important; }
+        .grading-complete { border-left: 8px solid var(--success) !important; opacity: 0.8; }
 
-        h1 {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            background: var(--primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+        h1 { font-size: 28px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Grouping Styles */
         .client-group { margin-bottom: 40px; }
-        .client-header { 
-            font-size: 14px; font-weight: 800; color: #6366f1; 
-            text-transform: uppercase; letter-spacing: 2px; 
-            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
-        }
-        .client-header::after { content: ""; flex: 1; height: 1px; background: rgba(0,0,0,0.05); }
+        .client-header { font-size: 12px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .client-header::after { content: ""; flex: 1; height: 1px; background: rgba(0,0,0,0.1); }
 
-        /* Buttons */
-        .btn {
-            cursor: pointer; border: none; padding: 12px 24px; border-radius: 16px;
-            font-weight: 700; font-size: 14px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: inline-flex; align-items: center; gap: 8px;
-        }
-        .btn:active { transform: scale(0.95); }
-        .btn-p { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
-        .btn-p:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.3); }
-        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 10px; }
+        .btn { cursor: pointer; border: none; padding: 10px 20px; border-radius: 14px; font-weight: 700; font-size: 13px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-p { background: var(--primary); color: white; }
         .btn-ghost { background: transparent; color: var(--gray); }
-        .btn-ghost:hover { background: rgba(0,0,0,0.05); color: var(--danger); }
+        .btn-ghost:hover { background: rgba(0,0,0,0.05); }
+        .btn-toggle { background: white; border: 1px solid #ddd; }
 
-        /* Card Modern Glassmorphism */
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: var(--radius);
-            margin-bottom: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-            transition: all 0.4s ease;
-            overflow: hidden;
-        }
-
-        .card-header { padding: 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .project-title { font-weight: 800; font-size: 20px; }
-        .project-meta { font-size: 13px; color: var(--gray); margin-top: 5px; display: flex; gap: 15px; }
-
+        .card { background: var(--glass); backdrop-filter: blur(15px); border-radius: var(--radius); margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.5); transition: 0.3s; overflow: hidden; position: relative; }
+        .card-header { padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 24px 24px 24px; border-top: 1px solid rgba(0,0,0,0.03); animation: slideDown 0.3s ease; }
         .card.expanded .card-body { display: block; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .section-title {
-            font-size: 12px; font-weight: 800; color: var(--gray); text-transform: uppercase;
-            letter-spacing: 1.5px; margin: 30px 0 15px 0; display: flex; align-items: center; gap: 8px;
-        }
-
-        /* Elements */
-        .item-row {
-            background: white; padding: 14px 18px; border-radius: 18px;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 15px;
-            transition: 0.2s; border: 1px solid transparent;
-        }
-        .item-row:hover { border-color: #e2e8f0; transform: scale(1.01); }
+        .project-title { font-weight: 800; font-size: 18px; }
+        .project-meta { font-size: 12px; color: var(--gray); margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; }
         
-        .check-box { width: 22px; height: 22px; border-radius: 8px; cursor: pointer; accent-color: #6366f1; }
-        .text-content { flex: 1; font-weight: 600; font-size: 15px; }
-        .text-content.done { text-decoration: line-through; opacity: 0.4; }
+        .section-title { font-size: 11px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin: 25px 0 10px 0; display: flex; align-items: center; gap: 8px; }
+        .item-row { background: white; padding: 12px 16px; border-radius: 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; border: 1px solid transparent; }
+        .text-content.done { text-decoration: line-through; opacity: 0.5; }
 
-        input, textarea {
-            width: 100%; padding: 14px 18px; border-radius: 16px; border: 2px solid #f1f5f9;
-            font-family: inherit; font-size: 14px; transition: 0.3s;
-        }
-        input:focus { border-color: #6366f1; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-
-        .badge {
-            padding: 6px 14px; border-radius: 12px; font-size: 11px; font-weight: 800;
-            cursor: pointer; text-transform: uppercase;
-        }
+        input, textarea { width: 100%; padding: 12px; border-radius: 14px; border: 2px solid #f1f5f9; font-size: 14px; margin-top: 5px; }
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 28px; width: 90%; max-width: 450px; }
+        
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .pending { background: #fff1f2; color: #e11d48; }
         .paid { background: #f0fdf4; color: #16a34a; }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
-
+        
         #progress-bar { height: 4px; background: var(--primary); position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
-
-        table { width: 100%; border-collapse: collapse; }
-        .table-container { background: white; border-radius: 20px; padding: 10px; margin-bottom: 15px; }
-        .flex-row { display: flex; gap: 10px; margin-top: 15px; }
+        .reminder-tag { font-weight: bold; color: var(--dark); }
+        .completed-mark { color: var(--success); font-weight: 800; }
     </style>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
@@ -145,7 +71,10 @@
 <div class="container">
     <header>
         <h1>Kerjain Woy! 🔥</h1>
-        <button class="btn btn-p" onclick="openModal()">+ New Project</button>
+        <div style="display:flex; gap:10px">
+            <button class="btn btn-toggle" id="toggleShowBtn" onclick="toggleShowCompleted()">Show Completed</button>
+            <button class="btn btn-p" onclick="openModal()">+ New Project</button>
+        </div>
     </header>
 
     <div id="projectList">
@@ -156,22 +85,34 @@
 <!-- Modal Create Project -->
 <div id="projectModal" class="modal">
     <div class="modal-content">
-        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Project Baru 🚀</h2>
-        <input type="text" id="pName" placeholder="Nama Project (e.g. Website Branding)" style="margin-bottom:12px">
-        <input type="text" id="pClient" placeholder="Siapa Client-nya?" style="margin-bottom:12px">
-        <div style="display:flex; gap:12px; margin-bottom:25px">
+        <h2 style="font-weight:800; margin-bottom:15px">Project Baru 🚀</h2>
+        <input type="text" id="pName" placeholder="Nama Project">
+        <input type="text" id="pClient" placeholder="Siapa Client-nya?">
+        <div style="display:flex; gap:10px; margin-top:10px">
             <div style="flex:1">
-                <label style="font-size:11px; font-weight:800; color:var(--gray)">START</label>
-                <input type="date" id="pStart">
-            </div>
-            <div style="flex:1">
-                <label style="font-size:11px; font-weight:800; color:var(--gray)">DEADLINE</label>
+                <label style="font-size:10px; font-weight:800; color:var(--gray)">DEADLINE PROJ</label>
                 <input type="date" id="pEnd">
             </div>
+            <div style="flex:1">
+                <label style="font-size:10px; font-weight:800; color:var(--gray)">TGL REMINDER (Follow-up)</label>
+                <input type="date" id="pReminder">
+            </div>
         </div>
-        <div style="display:flex; justify-content:flex-end; gap:12px">
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
             <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
             <button class="btn btn-p" onclick="createProject()">Gassken!</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Task -->
+<div id="editTaskModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:15px">Edit Tugas 📌</h3>
+        <input type="text" id="editTaskText">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
+            <button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button>
+            <button class="btn btn-p" id="saveEditTaskBtn">Simpan</button>
         </div>
     </div>
 </div>
@@ -179,25 +120,12 @@
 <!-- Modal Edit Invoice -->
 <div id="editInvModal" class="modal">
     <div class="modal-content">
-        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Edit Termin 💸</h2>
-        <input type="text" id="editInvLabel" placeholder="Nama Termin" style="margin-bottom:12px">
-        <input type="text" id="editInvAmount" placeholder="Nominal" 
-               oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
+        <h3 style="margin-bottom:15px">Edit Termin 💸</h3>
+        <input type="text" id="editInvLabel" placeholder="Nama Termin" style="margin-bottom:10px">
+        <input type="text" id="editInvAmount" placeholder="Nominal" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
             <button class="btn btn-ghost" onclick="closeEditInvModal()">Batal</button>
             <button class="btn btn-p" id="saveEditInvBtn">Simpan</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Edit Tugas -->
-<div id="editTaskModal" class="modal">
-    <div class="modal-content">
-        <h2 style="font-weight:800; margin-bottom:20px; letter-spacing:-1px">Edit Tugas 📌</h2>
-        <input type="text" id="editTaskText" placeholder="Nama Tugas">
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:20px">
-            <button class="btn btn-ghost" onclick="closeEditTaskModal()">Batal</button>
-            <button class="btn btn-p" id="saveEditTaskBtn">Simpan</button>
         </div>
     </div>
 </div>
@@ -208,63 +136,20 @@
 
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let projects = [];
-    let currentEditState = { pId: null, iId: null };
+    let showCompleted = false;
+    let currentEditTaskState = { pId: null, tId: null };
+    let currentEditInvState = { pId: null, iId: null };
 
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const openModal = () => document.getElementById('projectModal').style.display = 'flex';
     const closeModal = () => document.getElementById('projectModal').style.display = 'none';
 
-    // Format Rupiah
-    const formatRupiah = (angka) => {
-        if (!angka) return "0";
-        return new Intl.NumberFormat('id-ID').format(angka);
-    };
-
-    // Modal Edit Invoice Logic
-    function openEditInvModal(pId, iId) {
-        const p = projects.find(x => x.id === pId);
-        // Kita samakan keduanya jadi string supaya pencariannya ketemu
-        const i = p.invoices.find(x => x.id.toString() === iId.toString());
-    
-        if (!i) {
-            console.error("Invoice tidak ditemukan!");
-            return;
-        }
-    
-        currentEditState = { pId, iId: i.id }; // Simpan ID asli (angka)
-        
-        document.getElementById('editInvLabel').value = i.label;
-        document.getElementById('editInvAmount').value = formatRupiah(i.amount);
-        document.getElementById('editInvModal').style.display = 'flex';
-        
-        // Pasang fungsi simpan ke tombol
-        document.getElementById('saveEditInvBtn').onclick = saveEditInv;
-    }
-    function closeEditInvModal() { document.getElementById('editInvModal').style.display = 'none'; }
-
-    async function saveEditInv() {
-        const { pId, iId } = currentEditState;
-        const p = projects.find(x => x.id === pId);
-        // Samakan tipe data saat mencari invoice yang mau diupdate
-        const i = p.invoices.find(x => x.id.toString() === iId.toString());
-        
-        const newL = document.getElementById('editInvLabel').value;
-        const newA = document.getElementById('editInvAmount').value;
-        
-        if (newL && newA) {
-            i.label = newL;
-            i.amount = newA.replace(/\./g, ''); // Bersihkan titik
-            await updateDB(pId, { invoices: p.invoices });
-            closeEditInvModal();
-            render();
-        }
-    }
+    function formatRupiah(a) { return !a ? "0" : new Intl.NumberFormat('id-ID').format(a); }
 
     async function loadData() {
         loader(true);
         const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
         if (!error) { 
-            // Default semua collapse (tertutup) saat pertama buka
             projects = data.map(p => ({ ...p, expanded: false })); 
             render(); 
         }
@@ -279,25 +164,32 @@
 
     async function createProject() {
         const name = document.getElementById('pName').value;
-        if (!name) return alert("Isi nama projectnya!");
+        if (!name) return alert("Isi nama project!");
         loader(true);
         await supabaseClient.from('projects').insert([{
             name, client: document.getElementById('pClient').value || "No Client",
-            start_date: document.getElementById('pStart').value,
             end_date: document.getElementById('pEnd').value,
-            tasks: [], invoices: [], notes: "", expanded: false
+            reminder_date: document.getElementById('pReminder').value,
+            tasks: [], invoices: [], notes: "", expanded: false, is_completed: false
         }]);
         closeModal();
         loadData();
     }
 
-    async function deleteProject(id) {
-        if (confirm("Hapus project permanen?")) {
-            await supabaseClient.from('projects').delete().eq('id', id);
-            loadData();
-        }
+    async function toggleComplete(pId) {
+        const p = projects.find(x => x.id === pId);
+        const newStatus = !p.is_completed;
+        await updateDB(pId, { is_completed: newStatus });
+        loadData();
     }
 
+    function toggleShowCompleted() {
+        showCompleted = !showCompleted;
+        document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Completed" : "Show Completed";
+        render();
+    }
+
+    // Task Logic
     async function handleTask(pId, tId = null, action = 'add') {
         const p = projects.find(x => x.id === pId);
         if (action === 'add') {
@@ -306,147 +198,161 @@
             p.tasks.push({ id: Date.now(), text: val, done: false });
             document.getElementById(`tIn-${pId}`).value = "";
         } else if (action === 'toggle') {
-            const t = p.tasks.find(x => x.id === tId);
+            const t = p.tasks.find(x => x.id.toString() === tId.toString());
             t.done = !t.done;
         } else if (action === 'del') {
-            p.tasks = p.tasks.filter(x => x.id !== tId);
+            p.tasks = p.tasks.filter(x => x.id.toString() !== tId.toString());
         }
         await updateDB(pId, { tasks: p.tasks });
         render();
     }
 
-    let currentEditTaskState = { pId: null, tId: null };
-
     function openEditTaskModal(pId, tId) {
         const p = projects.find(x => x.id === pId);
         const t = p.tasks.find(x => x.id.toString() === tId.toString());
-        
-        if (!t) return;
-        
         currentEditTaskState = { pId, tId: t.id };
         document.getElementById('editTaskText').value = t.text;
         document.getElementById('editTaskModal').style.display = 'flex';
         document.getElementById('saveEditTaskBtn').onclick = saveEditTask;
     }
-    
     function closeEditTaskModal() { document.getElementById('editTaskModal').style.display = 'none'; }
-    
     async function saveEditTask() {
         const { pId, tId } = currentEditTaskState;
         const p = projects.find(x => x.id === pId);
         const t = p.tasks.find(x => x.id.toString() === tId.toString());
-        
-        const newVal = document.getElementById('editTaskText').value;
-        if (newVal) {
-            t.text = newVal;
-            await updateDB(pId, { tasks: p.tasks });
-            closeEditTaskModal();
-            render();
-        }
+        t.text = document.getElementById('editTaskText').value;
+        await updateDB(pId, { tasks: p.tasks });
+        closeEditTaskModal(); render();
     }
-    
+
+    // Invoice Logic
     async function handleInv(pId, iId = null, action = 'add') {
         const p = projects.find(x => x.id === pId);
         if (action === 'add') {
             const l = document.getElementById(`iL-${pId}`).value;
-            let a = document.getElementById(`iA-${pId}`).value;
+            const a = document.getElementById(`iA-${pId}`).value;
             if (!l || !a) return;
             p.invoices.push({ id: Date.now(), label: l, amount: a.replace(/\./g, ''), status: 'Pending' });
-            document.getElementById(`iL-${pId}`).value = "";
-            document.getElementById(`iA-${pId}`).value = "";
         } else if (action === 'toggle') {
-            const i = p.invoices.find(x => x.id === iId);
+            const i = p.invoices.find(x => x.id.toString() === iId.toString());
             i.status = i.status === 'Pending' ? 'Paid' : 'Pending';
         } else if (action === 'del') {
-            p.invoices = p.invoices.filter(x => x.id !== iId);
+            p.invoices = p.invoices.filter(x => x.id.toString() !== iId.toString());
         }
         await updateDB(pId, { invoices: p.invoices });
         render();
     }
 
-    function toggleCard(pId) {
-        projects = projects.map(p => {
-            if (p.id === pId) p.expanded = !p.expanded;
-            return p;
-        });
-        render();
+    function openEditInvModal(pId, iId) {
+        const p = projects.find(x => x.id === pId);
+        const i = p.invoices.find(x => x.id.toString() === iId.toString());
+        currentEditInvState = { pId, iId: i.id };
+        document.getElementById('editInvLabel').value = i.label;
+        document.getElementById('editInvAmount').value = formatRupiah(i.amount);
+        document.getElementById('editInvModal').style.display = 'flex';
+        document.getElementById('saveEditInvBtn').onclick = saveEditInv;
+    }
+    function closeEditInvModal() { document.getElementById('editInvModal').style.display = 'none'; }
+    async function saveEditInv() {
+        const { pId, iId } = currentEditInvState;
+        const p = projects.find(x => x.id === pId);
+        const i = p.invoices.find(x => x.id.toString() === iId.toString());
+        i.label = document.getElementById('editInvLabel').value;
+        i.amount = document.getElementById('editInvAmount').value.replace(/\./g, '');
+        await updateDB(pId, { invoices: p.invoices });
+        closeEditInvModal(); render();
+    }
+
+    function getGradingClass(p) {
+        if (p.is_completed) return 'grading-complete';
+        if (!p.reminder_date) return '';
+        
+        const today = new Date().setHours(0,0,0,0);
+        const remind = new Date(p.reminder_date).setHours(0,0,0,0);
+        const diff = Math.ceil((remind - today) / (1000 * 60 * 60 * 24));
+
+        if (diff <= 0) return 'grading-red';
+        if (diff <= 10) return 'grading-yellow';
+        return '';
     }
 
     function render() {
         const container = document.getElementById('projectList');
-        if (projects.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding:60px; background:var(--glass); border-radius:30px; border:2px dashed #cbd5e1"><h3>Kosong Melompong 🏝️</h3></div>`;
+        const filtered = projects.filter(p => showCompleted ? true : !p.is_completed);
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding:60px; color:gray">No projects found.</div>`;
             return;
         }
 
-        // Grouping Logika
-        const grouped = projects.reduce((acc, p) => {
-            const client = p.client || "No Client";
-            if (!acc[client]) acc[client] = [];
-            acc[client].push(p);
+        const grouped = filtered.reduce((acc, p) => {
+            const c = p.client || "No Client";
+            if (!acc[c]) acc[c] = [];
+            acc[c].push(p);
             return acc;
         }, {});
 
         let html = "";
         for (const client in grouped) {
-            html += `
-            <div class="client-group">
+            html += `<div class="client-group">
                 <div class="client-header">${client}</div>
                 ${grouped[client].map(p => `
-                    <div class="card ${p.expanded ? 'expanded' : ''}" id="card-${p.id}">
-                        <div class="card-header" onclick="toggleCard('${p.id}')">
+                    <div class="card ${p.expanded ? 'expanded' : ''} ${getGradingClass(p)}" id="card-${p.id}">
+                        <div class="card-header" onclick="projects.find(x=>x.id==='${p.id}').expanded=!projects.find(x=>x.id==='${p.id}').expanded; render();">
                             <div>
-                                <div class="project-title">${p.name}</div>
-                                <div class="project-meta"><span>⏳ Deadline: ${p.end_date || '-'}</span></div>
+                                <div class="project-title">${p.is_completed ? '✅ ' : ''}${p.name}</div>
+                                <div class="project-meta">
+                                    <span>⏳ Deadline: ${p.end_date || '-'}</span>
+                                    <span class="reminder-tag">🔔 Reminder: ${p.reminder_date || '-'}</span>
+                                </div>
                             </div>
-                            <div style="font-size:20px; color:var(--gray); transition:0.3s; transform:${p.expanded ? 'rotate(180deg)' : 'rotate(0deg)'}">⌄</div>
+                            <div style="font-size:20px">⌄</div>
                         </div>
-
                         <div class="card-body">
-                            <div class="section-title">📌 Checklist Tugas</div>
-                                ${p.tasks.map(t => `
-                                    <div class="item-row">
-                                        <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
-                                        <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
-                                        <div style="display:flex; gap:5px">
-                                            <button class="btn btn-sm btn-ghost" onclick="openEditTaskModal('${p.id}', '${t.id}')">✎</button>
-                                            <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', '${t.id}', 'del')">×</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            <div class="flex-row">
-                                <input type="text" id="tIn-${p.id}" placeholder="Input tugas baru..." onkeypress="if(event.key==='Enter') handleTask('${p.id}')">
+                            <div class="section-title">📌 Tasks</div>
+                            ${p.tasks.map(t => `
+                                <div class="item-row">
+                                    <input type="checkbox" class="check-box" ${t.done ? 'checked' : ''} onchange="handleTask('${p.id}', '${t.id}', 'toggle')">
+                                    <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
+                                    <button class="btn btn-sm btn-ghost" onclick="openEditTaskModal('${p.id}', '${t.id}')">✎</button>
+                                    <button class="btn btn-sm btn-ghost" onclick="handleTask('${p.id}', '${t.id}', 'del')">×</button>
+                                </div>
+                            `).join('')}
+                            <div style="display:flex; gap:10px; margin-top:10px">
+                                <input type="text" id="tIn-${p.id}" placeholder="New task...">
                                 <button class="btn btn-p btn-sm" onclick="handleTask('${p.id}')">Add</button>
                             </div>
 
-                            <div class="section-title">💸 Money Tracker</div>
-                            <div class="table-container">
-                                <table>
+                            <div class="section-title">💸 Invoicing</div>
+                            <div style="background:white; border-radius:18px; padding:10px; margin-bottom:10px">
+                                <table style="width:100%; border-collapse:collapse; font-size:13px">
                                     ${p.invoices.map(i => `
                                         <tr style="border-bottom:1px solid #f1f5f9">
-                                            <td style="padding:12px; font-weight:600">${i.label}</td>
-                                            <td style="padding:12px; font-weight:800; color:#4f46e5">IDR ${formatRupiah(i.amount)}</td>
-                                            <td style="padding:12px"><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', ${i.id}, 'toggle')">${i.status}</span></td>
-                                            <td style="padding:12px; text-align:right; display:flex; gap:5px; justify-content:flex-end">
+                                            <td style="padding:10px 5px">${i.label}</td>
+                                            <td style="font-weight:800">IDR ${formatRupiah(i.amount)}</td>
+                                            <td><span class="badge ${i.status.toLowerCase()}" onclick="handleInv('${p.id}', '${i.id}', 'toggle')">${i.status}</span></td>
+                                            <td style="text-align:right">
                                                 <button class="btn btn-sm btn-ghost" onclick="openEditInvModal('${p.id}', '${i.id}')">✎</button>
-                                                <button class="btn btn-sm btn-ghost" onclick="handleInv('${p.id}', ${i.id}, 'del')">×</button>
+                                                <button class="btn btn-sm btn-ghost" onclick="handleInv('${p.id}', '${i.id}', 'del')">×</button>
                                             </td>
                                         </tr>
                                     `).join('')}
                                 </table>
                             </div>
-                            <div class="flex-row">
-                                <input type="text" id="iL-${p.id}" placeholder="Label Termin" style="flex:2">
-                                <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" 
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-                                <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}')">Simpan</button>
+                            <div style="display:flex; gap:10px">
+                                <input type="text" id="iL-${p.id}" placeholder="Label" style="flex:2">
+                                <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+                                <button class="btn btn-sm btn-p" onclick="handleInv('${p.id}')">Save</button>
                             </div>
 
                             <div class="section-title">📝 Notes</div>
-                            <textarea placeholder="Catatan project..." onblur="updateDB('${p.id}', { notes: this.value })">${p.notes || ''}</textarea>
+                            <textarea onblur="updateDB('${p.id}', { notes: this.value })">${p.notes || ''}</textarea>
 
-                            <div style="text-align:right; margin-top:30px">
-                                <button class="btn btn-sm btn-ghost" onclick="deleteProject('${p.id}')" style="font-weight:800; color:var(--danger)">HAPUS PROJECT</button>
+                            <div style="display:flex; justify-content:space-between; margin-top:30px">
+                                <button class="btn btn-ghost" style="color:var(--danger)" onclick="supabaseClient.from('projects').delete().eq('id', '${p.id}').then(()=>loadData())">Hapus</button>
+                                <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="toggleComplete('${p.id}')">
+                                    ${p.is_completed ? 'Re-open Project' : 'Mark as Complete ✅'}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -457,10 +363,6 @@
     }
 
     loadData();
-    
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
-    }
 </script>
 </body>
 </html>
