@@ -211,11 +211,21 @@
     // Modal Edit Invoice Logic
     function openEditInvModal(pId, iId) {
         const p = projects.find(x => x.id === pId);
-        const i = p.invoices.find(x => x.id === iId);
-        currentEditState = { pId, iId };
+        // Kita samakan keduanya jadi string supaya pencariannya ketemu
+        const i = p.invoices.find(x => x.id.toString() === iId.toString());
+    
+        if (!i) {
+            console.error("Invoice tidak ditemukan!");
+            return;
+        }
+    
+        currentEditState = { pId, iId: i.id }; // Simpan ID asli (angka)
+        
         document.getElementById('editInvLabel').value = i.label;
         document.getElementById('editInvAmount').value = formatRupiah(i.amount);
         document.getElementById('editInvModal').style.display = 'flex';
+        
+        // Pasang fungsi simpan ke tombol
         document.getElementById('saveEditInvBtn').onclick = saveEditInv;
     }
     function closeEditInvModal() { document.getElementById('editInvModal').style.display = 'none'; }
@@ -223,12 +233,15 @@
     async function saveEditInv() {
         const { pId, iId } = currentEditState;
         const p = projects.find(x => x.id === pId);
-        const i = p.invoices.find(x => x.id === iId);
+        // Samakan tipe data saat mencari invoice yang mau diupdate
+        const i = p.invoices.find(x => x.id.toString() === iId.toString());
+        
         const newL = document.getElementById('editInvLabel').value;
         const newA = document.getElementById('editInvAmount').value;
+        
         if (newL && newA) {
             i.label = newL;
-            i.amount = newA.replace(/\./g, '');
+            i.amount = newA.replace(/\./g, ''); // Bersihkan titik
             await updateDB(pId, { invoices: p.invoices });
             closeEditInvModal();
             render();
