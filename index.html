@@ -5,113 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kerjain Woy! Pro 🔥</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Font INTER: Lebih tajam dan tegas untuk layar laptop -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f1f5f9; 
-            --primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            --dark: #0f172a; /* Teks lebih gelap agar tajam */
-            --gray: #475569; /* Abu-abu lebih kontras */
-            --danger: #dc2626; 
-            --warning: #f59e0b; 
-            --success: #16a34a;
-            --radius: 12px;
+            --bg: #f1f5f9; --primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --dark: #0f172a; --gray: #475569; --danger: #dc2626; 
+            --warning: #f59e0b; --success: #16a34a; --radius: 12px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: var(--bg); 
-            color: var(--dark); 
-            padding: 20px; 
-            font-size: 13px; 
-            font-weight: 500; 
-        }
-
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; font-size: 13px; font-weight: 500; }
         .container { max-width: 1400px; margin: 0 auto; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         h1 { font-size: 26px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
 
+        /* VIEW TOGGLE */
+        .view-switcher { display: flex; background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 20px; width: fit-content; }
+        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 12px; color: var(--gray); transition: 0.2s; }
+        .view-btn.active { background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
         /* TRIPLE GRID */
         .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 1024px) {
-            .dashboard-wrapper { grid-template-columns: 220px 1fr 300px; align-items: start; }
-        }
+        @media (min-width: 1024px) { .dashboard-wrapper { grid-template-columns: 220px 1fr 300px; align-items: start; } }
 
         /* NAVIGATION KIRI */
         .client-nav { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 10px; }
         @media (min-width: 1024px) { .client-nav { flex-direction: column; position: sticky; top: 20px; } }
-        .nav-item { 
-            padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; 
-            transition: 0.2s; white-space: nowrap; border: 1.5px solid #e2e8f0; background: white; color: var(--gray);
-        }
+        .nav-item { padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; border: 1.5px solid #e2e8f0; background: white; color: var(--gray); white-space: nowrap; }
         .nav-item.active { background: var(--dark); color: white; border-color: var(--dark); }
 
-        /* WORKSPACE TENGAH */
+        /* CARDS & DOCUMENT ROWS */
         .workspace { min-width: 0; }
+        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; position: relative; }
+        .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
+        .card.expanded .card-body { display: block; }
 
-        /* SIDEBAR KANAN */
-        .sidebar { display: flex; flex-direction: column; gap: 20px; }
-        @media (min-width: 1024px) { .sidebar { position: sticky; top: 20px; } }
-        .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; border: 1.5px solid #e2e8f0; }
-        
-        /* ANALOG CLOCK */
-        .clock-box { display: flex; flex-direction: column; align-items: center; background: #0f172a; color: white; border: none; }
-        .clock { width: 90px; height: 90px; border: 3px solid white; border-radius: 50%; position: relative; margin-bottom: 10px; }
-        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
-        .hour { width: 3px; height: 20px; } .min { width: 2px; height: 30px; } .sec { width: 1px; height: 35px; background: #ef4444; }
+        .item-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
+        .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
+        .doc-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; }
 
-        /* CARDS */
-        .card { 
-            background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; 
-            margin-bottom: 12px; transition: 0.2s; overflow: hidden; position: relative; 
-        }
-        
-        /* GRADING LOGIC: Tebal dan Tegas */
+        /* GRADING */
         .grading-yellow { border-left: 12px solid var(--warning) !important; }
         .grading-red { border-left: 12px solid var(--danger) !important; }
         .grading-complete { border-left: 12px solid var(--success) !important; }
 
-        .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .project-title { font-weight: 800; font-size: 16px; color: var(--dark); }
-        .project-meta { font-size: 11px; color: var(--gray); margin-top: 4px; display: flex; gap: 12px; font-weight: 600; }
-        
-        .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
-        .card.expanded .card-body { display: block; }
-        .inner-content { max-width: 700px; }
+        /* SIDEBAR COMPONENTS */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; border: 1.5px solid #e2e8f0; }
+        .clock-box { display: flex; flex-direction: column; align-items: center; background: #0f172a; color: white; border: none; }
+        .clock { width: 80px; height: 90px; border: 3px solid white; border-radius: 50%; position: relative; margin-bottom: 10px; transform: scale(0.9); }
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
+        .hour { width: 3px; height: 20px; } .min { width: 2px; height: 30px; } .sec { width: 1px; height: 35px; background: #ef4444; }
 
-        .item-row { 
-            display: grid; grid-template-columns: auto 1fr auto; align-items: center; 
-            gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; 
-            margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600;
-        }
-        .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
-        .text-content.done { text-decoration: line-through; color: #94a3b8; }
-
-        /* BUTTONS & INPUTS */
-        .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 12px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        /* UI ELEMENTS */
+        .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-p { background: var(--dark); color: white; }
         .btn-ghost { background: #f1f5f9; color: var(--gray); border: 1px solid #e2e8f0; }
-        
-        input, textarea { 
-            width: 100%; padding: 10px 14px; border-radius: 10px; 
-            border: 2px solid #e2e8f0; font-size: 13px; font-family: 'Inter', sans-serif; 
-            color: var(--dark); font-weight: 600; 
-        }
-        input:focus { border-color: #4f46e5; outline: none; }
-
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; }
-        .pending { background: #fee2e2; color: #991b1b; }
-        .paid { background: #dcfce7; color: #166534; }
+        input, textarea { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        .lifetime { background: #f0fdf4; color: #166534; }
+        .expired { background: #fef2f2; color: #991b1b; }
 
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 95%; max-width: 450px; }
-        
-        .client-header { font-size: 11px; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-        .client-header::after { content: ""; flex: 1; height: 1.5px; background: #e2e8f0; }
+        .urgent-item { font-size: 11px; padding: 8px; border-radius: 8px; background: #f8fafc; margin-bottom: 5px; border-left: 4px solid var(--danger); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -127,96 +86,57 @@
         </div>
     </header>
 
+    <div class="view-switcher">
+        <button class="view-btn active" id="v-projects" onclick="switchView('projects')">PROJECTS</button>
+        <button class="view-btn" id="v-docs" onclick="switchView('docs')">DOCUMENTS</button>
+    </div>
+
     <div class="dashboard-wrapper">
-        <!-- GRID 1: CLIENT NAV -->
         <div class="client-nav" id="clientNav"></div>
 
-        <!-- GRID 2: MAIN WORKSPACE -->
         <div class="workspace">
             <div id="projectList"></div>
+            <div id="documentList" style="display:none"></div>
         </div>
 
-        <!-- GRID 3: SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-card clock-box">
-                <div class="clock">
-                    <div class="hand hour" id="hourHand"></div>
-                    <div class="hand min" id="minHand"></div>
-                    <div class="hand sec" id="secHand"></div>
-                </div>
-                <div id="digitalTime" style="font-weight: 800; font-size: 15px; letter-spacing: 1px;">00:00:00</div>
+                <div class="clock"><div class="hand hour" id="hourHand"></div><div class="hand min" id="minHand"></div><div class="hand sec" id="secHand"></div></div>
+                <div id="digitalTime" style="font-weight: 800; font-size: 15px;">00:00:00</div>
             </div>
-
             <div class="sidebar-card">
-                <div style="font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase;">💰 Money Overview</div>
-                <div style="display:grid; grid-template-columns: 1fr; gap:10px; margin-top:12px">
-                    <div style="background:#f8fafc; padding:12px; border-radius:10px">
-                        <div style="font-size:9px; color:var(--gray); font-weight:800">TOTAL PAID</div>
-                        <div id="totalPaid" style="font-weight:800; font-size:14px; color:var(--success)">0</div>
-                    </div>
-                    <div style="background:#f8fafc; padding:12px; border-radius:10px">
-                        <div style="font-size:9px; color:var(--gray); font-weight:800">TOTAL PENDING</div>
-                        <div id="totalPending" style="font-weight:800; font-size:14px; color:var(--danger)">0</div>
-                    </div>
+                <div style="font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase;">💰 Money</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px">
+                    <div style="background:#f8fafc; padding:10px; border-radius:10px"><div style="font-size:8px; color:var(--gray)">PAID</div><div id="totalPaid" style="font-weight:800; color:var(--success)">0</div></div>
+                    <div style="background:#f8fafc; padding:10px; border-radius:10px"><div style="font-size:8px; color:var(--gray)">PENDING</div><div id="totalPending" style="font-weight:800; color:var(--danger)">0</div></div>
                 </div>
             </div>
-
             <div class="sidebar-card">
-                <div style="font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase;">⚠️ Urgent Projects</div>
-                <div id="urgentFeed" style="margin-top:12px; font-size:12px; font-weight:700; color:var(--gray)">All clear!</div>
+                <div style="font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase;">⚠️ Alerts</div>
+                <div id="urgentFeed" style="margin-top:10px"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Create Project -->
-<div id="projectModal" class="modal">
-    <div class="modal-content">
-        <h2 style="font-weight:800; margin-bottom:20px; font-size:20px">New Project 🚀</h2>
-        <input type="text" id="pName" placeholder="Nama Project">
-        <input type="text" id="pClient" placeholder="Nama Client" style="margin-top:10px">
-        <div style="display:flex; gap:10px; margin-top:15px">
-            <div style="flex:1"><label style="font-size:10px;font-weight:800;color:var(--gray)">START DATE</label><input type="date" id="pStart"></div>
-            <div style="flex:1"><label style="font-size:10px;font-weight:800;color:var(--gray)">END DATE</label><input type="date" id="pEnd"></div>
-        </div>
-        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px">
-            <button class="btn btn-ghost" onclick="document.getElementById('projectModal').style.display='none'">Cancel</button>
-            <button class="btn btn-p" onclick="createProject()">Create Project</button>
-        </div>
-    </div>
-</div>
+<!-- Modal Project -->
+<div id="projectModal" class="modal"><div class="modal-content"><h2 style="font-weight:800; margin-bottom:15px">New Project 🚀</h2><input type="text" id="pName" placeholder="Project Name"><input type="text" id="pClient" placeholder="Client Name" style="margin-top:10px"><div style="display:flex; gap:10px; margin-top:15px"> <div style="flex:1"><label style="font-size:10px; font-weight:800">START</label><input type="date" id="pStart"></div> <div style="flex:1"><label style="font-size:10px; font-weight:800">END</label><input type="date" id="pEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="document.getElementById('projectModal').style.display='none'">Cancel</button><button class="btn btn-p" onclick="createProject()">Create</button></div></div></div>
 
-<!-- Modal Edit Task -->
-<div id="editTaskModal" class="modal"><div class="modal-content">
-    <h3 style="font-weight:800; margin-bottom:15px">Edit Task</h3>
-    <input type="text" id="editTaskText">
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
-        <button class="btn btn-ghost" onclick="document.getElementById('editTaskModal').style.display='none'">Cancel</button>
-        <button class="btn btn-p" id="saveEditTaskBtn">Update</button>
-    </div>
-</div></div>
+<!-- Modal Document -->
+<div id="docModal" class="modal"><div class="modal-content"><h2 style="font-weight:800; margin-bottom:15px">Add Document 📄</h2><input type="text" id="dName" placeholder="Document Name (e.g. NIB, Kontrak)"><input type="text" id="dClient" placeholder="Client Name" style="margin-top:10px"><div style="display:flex; gap:10px; margin-top:15px"> <div style="flex:1"><label style="font-size:10px; font-weight:800">VALID FROM</label><input type="date" id="dStart"></div> <div style="flex:1"><label style="font-size:10px; font-weight:800">EXPIRES (Optional)</label><input type="date" id="dEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="document.getElementById('docModal').style.display='none'">Cancel</button><button class="btn btn-p" onclick="createDoc()">Save Document</button></div></div></div>
 
-<!-- Modal Edit Inv -->
-<div id="editInvModal" class="modal"><div class="modal-content">
-    <h3 style="font-weight:800; margin-bottom:15px">Edit Termin</h3>
-    <input type="text" id="editInvLabel" style="margin-bottom:10px">
-    <input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
-        <button class="btn btn-ghost" onclick="document.getElementById('editInvModal').style.display='none'">Cancel</button>
-        <button class="btn btn-p" id="saveEditInvBtn">Update</button>
-    </div>
-</div></div>
+<!-- Modals Edit (Task/Inv) -->
+<div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Task</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="document.getElementById('editTaskModal').style.display='none'">Cancel</button><button class="btn btn-p" id="saveEditTaskBtn">Update</button></div></div></div>
+<div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:10px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="document.getElementById('editInvModal').style.display='none'">Cancel</button><button class="btn btn-p" id="saveEditInvBtn">Update</button></div></div></div>
 
 <script>
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
     const sb = supabase.createClient(SB_URL, SB_KEY);
 
-    let projects = [];
-    let filterClient = "All Projects";
-    let showCompleted = false;
+    let projects = [], documents = [], currentView = 'projects', filterClient = "All Projects", showCompleted = false;
 
-    // Analog Clock
+    // Clock Logic
     setInterval(() => {
         const now = new Date();
         document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${now.getSeconds() * 6}deg)`;
@@ -226,233 +146,154 @@
     }, 1000);
 
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
-    
-    // RESET FORM SAAT BUKA MODAL
-    const openModal = () => {
-        document.getElementById('pName').value = ""; 
-        document.getElementById('pClient').value = "";
-        document.getElementById('pStart').value = ""; 
-        document.getElementById('pEnd').value = "";
-        document.getElementById('projectModal').style.display = 'flex';
-    };
-
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
 
-    async function loadData() {
+    async function loadAll() {
         loader(true);
-        const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: false });
-        if (!error) { 
-            const exp = projects.filter(p => p.expanded).map(p => p.id);
-            projects = data.map(p => ({ ...p, expanded: exp.includes(p.id) })); 
-            renderNav(); render(); updateSummary();
-        }
+        const { data: pData } = await sb.from('projects').select('*').order('created_at', { ascending: false });
+        const { data: dData } = await sb.from('client_documents').select('*').order('end_date', { ascending: true });
+        projects = pData || []; documents = dData || [];
+        renderNav(); render(); updateSummary();
         loader(false);
+    }
+
+    function switchView(v) {
+        currentView = v;
+        document.getElementById('v-projects').classList.toggle('active', v === 'projects');
+        document.getElementById('v-docs').classList.toggle('active', v === 'docs');
+        document.getElementById('projectList').style.display = v === 'projects' ? 'block' : 'none';
+        document.getElementById('documentList').style.display = v === 'docs' ? 'block' : 'none';
+        render();
     }
 
     function renderNav() {
         const nav = document.getElementById('clientNav');
-        const clients = ["All Projects", ...new Set(projects.map(p => p.client || "No Client"))];
-        nav.innerHTML = clients.map(c => `
-            <div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">
-                ${c}
-            </div>
-        `).join('');
+        const clients = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client_name)])];
+        nav.innerHTML = clients.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
     }
 
+    // PROJECT ACTIONS
     async function createProject() {
         const name = document.getElementById('pName').value;
-        if (!name) return alert("Nama project wajib diisi!");
-        await sb.from('projects').insert([{
-            name, client: document.getElementById('pClient').value || "No Client",
-            start_date: document.getElementById('pStart').value, end_date: document.getElementById('pEnd').value,
-            is_completed: false, tasks: [], invoices: [], notes: ""
-        }]);
-        document.getElementById('projectModal').style.display='none'; 
-        loadData();
+        if (!name) return alert("Wajib isi!");
+        await sb.from('projects').insert([{ name, client: document.getElementById('pClient').value || "No Client", start_date: document.getElementById('pStart').value, end_date: document.getElementById('pEnd').value, tasks: [], invoices: [] }]);
+        document.getElementById('projectModal').style.display='none'; loadAll();
     }
 
+    // DOCUMENT ACTIONS
+    async function createDoc() {
+        const name = document.getElementById('dName').value;
+        if (!name) return alert("Nama dokumen wajib!");
+        await sb.from('client_documents').insert([{ doc_name: name, client_name: document.getElementById('dClient').value || "No Client", start_date: document.getElementById('dStart').value, end_date: document.getElementById('dEnd').value }]);
+        document.getElementById('docModal').style.display='none'; loadAll();
+    }
+
+    async function deleteDoc(id) { if(confirm('Hapus dokumen ini?')) { await sb.from('client_documents').delete().eq('id', id); loadAll(); } }
+
     function updateSummary() {
-        let paid = 0, pending = 0, urgents = [];
+        let paid = 0, pending = 0, alerts = [];
         const today = new Date().setHours(0,0,0,0);
         projects.forEach(p => {
             p.invoices.forEach(i => { if(i.status==='Paid') paid+=parseInt(i.amount); else pending+=parseInt(i.amount); });
             if(!p.is_completed && p.reminder_date) {
                 const diff = Math.ceil((new Date(p.reminder_date) - today) / 86400000);
-                if(diff <= 10) urgents.push(p.name);
+                if(diff <= 10) alerts.push(`Proj: ${p.name} (${diff <= 0 ? 'OVERDUE' : diff + 'd'})`);
             }
         });
-        document.getElementById('totalPaid').innerText = "IDR " + formatRupiah(paid);
-        document.getElementById('totalPending').innerText = "IDR " + formatRupiah(pending);
-        document.getElementById('urgentFeed').innerText = urgents.length ? urgents.join(', ') : "No urgent projects.";
-    }
-
-    // FUNGSI GRADING DENGAN LOGIKA TANGGAL YANG BENAR
-    function getGradingClass(p) {
-        if (p.is_completed) return 'grading-complete';
-        if (!p.reminder_date) return '';
-        
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const remindDate = new Date(p.reminder_date);
-        remindDate.setHours(0, 0, 0, 0);
-        
-        const diffTime = remindDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays <= 0) return 'grading-red';
-        if (diffDays <= 10) return 'grading-yellow';
-        return '';
+        documents.forEach(d => {
+            if(d.end_date) {
+                const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
+                if(diff <= 30) alerts.push(`Doc: ${d.doc_name} (${diff <= 0 ? 'EXPIRED' : diff + 'd'})`);
+            }
+        });
+        document.getElementById('totalPaid').innerText = formatRupiah(paid);
+        document.getElementById('totalPending').innerText = formatRupiah(pending);
+        document.getElementById('urgentFeed').innerHTML = alerts.map(a => `<div class="urgent-item">${a}</div>`).join('') || "All clear!";
     }
 
     function render() {
+        if(currentView === 'projects') renderProjects();
+        else renderDocs();
+    }
+
+    function renderProjects() {
         const container = document.getElementById('projectList');
         let filtered = projects.filter(p => showCompleted ? true : !p.is_completed);
-        if (filterClient !== "All Projects") filtered = filtered.filter(p => (p.client || "No Client") === filterClient);
+        if (filterClient !== "All Projects") filtered = filtered.filter(p => p.client === filterClient);
         
-        if(!filtered.length) { container.innerHTML = `<div style="text-align:center; padding:40px; color:gray">No projects found.</div>`; return; }
-
-        const grouped = filtered.reduce((acc, p) => {
-            const c = p.client || "No Client";
-            if (!acc[c]) acc[c] = []; acc[c].push(p); return acc;
-        }, {});
-
+        const grouped = filtered.reduce((acc, p) => { const c = p.client || "No Client"; if (!acc[c]) acc[c] = []; acc[c].push(p); return acc; }, {});
         let html = "";
         for (const client in grouped) {
             html += `<div class="client-group"><div class="client-header">${client}</div>`;
             html += grouped[client].map(p => `
-                <div class="card ${p.expanded ? 'expanded' : ''} ${getGradingClass(p)}">
+                <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}">
                     <div class="card-header" onclick="projects.find(x=>x.id==='${p.id}').expanded=!projects.find(x=>x.id==='${p.id}').expanded; render();">
-                        <div>
-                            <div class="project-title">${p.is_completed ? '✅ ' : ''}${p.name}</div>
-                            <div class="project-meta">
-                                <span>📅 ${p.start_date || '-'} s/d ${p.end_date || '-'}</span>
-                                ${p.reminder_date ? `<span style="color:var(--dark); font-weight:800">🔔 Remind: ${p.reminder_date}</span>` : ''}
-                            </div>
-                        </div>
-                        <div style="font-size:12px; color:var(--gray)">${p.expanded ? '▲' : '▼'}</div>
+                        <div><div class="project-title">${p.is_completed ? '✅ ' : ''}${p.name}</div><div class="project-meta">📅 ${p.start_date || '-'} to ${p.end_date || '-'}</div></div>
+                        <div>${p.expanded ? '▲' : '▼'}</div>
                     </div>
                     <div class="card-body">
-                        <div class="inner-content">
-                            <div style="font-size:10px; font-weight:800; color:var(--gray); text-transform:uppercase; margin-bottom:5px">⏰ Set Reminder Date</div>
-                            <input type="date" value="${p.reminder_date || ''}" onchange="sb.from('projects').update({reminder_date:this.value}).eq('id','${p.id}').then(()=>loadData())" style="max-width:180px">
-
-                            <div style="font-size:10px; font-weight:800; color:var(--gray); text-transform:uppercase; margin:20px 0 8px 0">📌 Checklist Tasks</div>
-                            ${p.tasks.map(t => `
-                                <div class="item-row">
-                                    <input type="checkbox" style="width:18px;height:18px" ${t.done ? 'checked' : ''} onchange="toggleTask('${p.id}','${t.id}')">
-                                    <span class="text-content ${t.done ? 'done' : ''}">${t.text}</span>
-                                    <div style="display:flex; gap:4px">
-                                        <button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditTaskModal('${p.id}','${t.id}')">✎</button>
-                                        <button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteTask('${p.id}','${t.id}')">×</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                            <div style="display:flex; gap:8px; margin-top:8px">
-                                <input type="text" id="tIn-${p.id}" placeholder="Tambah tugas...">
-                                <button class="btn btn-p" onclick="addTask('${p.id}')">Add</button>
-                            </div>
-
-                            <div style="font-size:10px; font-weight:800; color:var(--gray); text-transform:uppercase; margin:20px 0 8px 0">💸 Invoicing</div>
-                            ${p.invoices.map(i => `
-                                <div class="item-row inv-row">
-                                    <span style="font-weight:700">${i.label}</span>
-                                    <span style="color:#4f46e5; font-weight:800">IDR ${formatRupiah(i.amount)}</span>
-                                    <span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span>
-                                    <div style="display:flex; gap:4px">
-                                        <button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button>
-                                        <button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                            <div style="display:flex; gap:8px; margin-top:8px">
-                                <input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5">
-                                <input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
-                                <button class="btn btn-p" onclick="addInv('${p.id}')">Save</button>
-                            </div>
-
-                            <div style="font-size:10px; font-weight:800; color:var(--gray); text-transform:uppercase; margin:20px 0 8px 0">📝 Notes</div>
-                            <textarea onblur="sb.from('projects').update({notes:this.value}).eq('id','${p.id}')">${p.notes || ''}</textarea>
-
-                            <div style="display:flex; justify-content:space-between; margin-top:25px">
-                                <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('projects').delete().eq('id', '${p.id}').then(()=>loadData())">Delete</button>
-                                <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="sb.from('projects').update({is_completed:!${p.is_completed}}).eq('id','${p.id}').then(()=>loadData())">
-                                    ${p.is_completed ? 'Re-open' : 'Complete ✅'}
-                                </button>
+                        <div style="max-width:700px">
+                            <label style="font-size:10px; font-weight:800; color:var(--gray)">⏰ REMINDER</label>
+                            <input type="date" value="${p.reminder_date || ''}" onchange="sb.from('projects').update({reminder_date:this.value}).eq('id','${p.id}').then(()=>loadAll())" style="max-width:180px; margin-bottom:15px">
+                            
+                            <div style="font-size:10px; font-weight:800; color:var(--gray)">📌 TASKS</div>
+                            ${p.tasks.map(t => `<div class="item-row"><input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask('${p.id}','${t.id}')"><span style="flex:1" class="${t.done?'text-content done':'text-content'}">${t.text}</span><div style="display:flex;gap:5px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditTaskModal('${p.id}','${t.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteTask('${p.id}','${t.id}')">×</button></div></div>`).join('')}
+                            <div style="display:flex; gap:8px; margin:10px 0"><input type="text" id="tIn-${p.id}" placeholder="Add task..."><button class="btn btn-p" onclick="addTask('${p.id}')">Add</button></div>
+                            
+                            <div style="font-size:10px; font-weight:800; color:var(--gray)">💸 INVOICING</div>
+                            ${p.invoices.map(i => `<div class="item-row inv-row"><span style="font-weight:700">${i.label}</span><span style="color:#4f46e5; font-weight:800">IDR ${formatRupiah(i.amount)}</span><span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span><div style="display:flex; gap:5px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button></div></div>`).join('')}
+                            <div style="display:flex; gap:8px; margin-top:10px"><input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5"><input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><button class="btn btn-p" onclick="addInv('${p.id}')">Save</button></div>
+                            
+                            <div style="margin-top:20px; display:flex; justify-content:space-between">
+                                <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Delete?')) sb.from('projects').delete().eq('id','${p.id}').then(()=>loadAll())">Delete</button>
+                                <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="sb.from('projects').update({is_completed:!${p.is_completed}}).eq('id','${p.id}').then(()=>loadAll())">${p.is_completed?'Re-open':'Complete ✅'}</button>
                             </div>
                         </div>
                     </div>
                 </div>`).join('');
             html += `</div>`;
         }
+        container.innerHTML = html || "<div style='text-align:center; padding:40px; color:gray'>No projects found.</div>";
+    }
+
+    function renderDocs() {
+        const container = document.getElementById('documentList');
+        let filtered = documents;
+        if (filterClient !== "All Projects") filtered = documents.filter(d => d.client_name === filterClient);
+
+        let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px"><h3 style="font-weight:800">CLIENT DOCUMENTS</h3><button class="btn btn-p" onclick="document.getElementById('docModal').style.display='flex'">+ Add Document</button></div>`;
+        
+        if(!filtered.length) { container.innerHTML = html + `<div style="text-align:center; padding:40px; color:gray">No documents for this client.</div>`; return; }
+
+        html += filtered.map(d => {
+            const today = new Date().setHours(0,0,0,0);
+            const isExpired = d.end_date && new Date(d.end_date) < today;
+            return `
+            <div class="doc-grid">
+                <div><div style="font-size:10px; color:var(--gray); font-weight:800">DOCUMENT</div><div style="font-weight:800">${d.doc_name}</div></div>
+                <div><div style="font-size:10px; color:var(--gray); font-weight:800">CLIENT</div><div style="font-weight:600">${d.client_name}</div></div>
+                <div><div style="font-size:10px; color:var(--gray); font-weight:800">VALIDITY</div><div style="font-size:11px; font-weight:700">${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div></div>
+                <div><span class="badge ${d.end_date ? (isExpired ? 'expired' : 'pending') : 'lifetime'}">${d.end_date ? (isExpired ? 'Expired' : 'Active') : 'Lifetime'}</span></div>
+                <button class="btn btn-ghost" style="padding:6px; color:var(--danger)" onclick="deleteDoc('${d.id}')">×</button>
+            </div>`;
+        }).join('');
         container.innerHTML = html;
     }
 
-    // LOGIKA TAMBAH/EDIT/HAPUS (Disederhanakan agar stabil)
-    async function addTask(pId) {
-        const v = document.getElementById(`tIn-${pId}`).value; if(!v) return;
-        const p = projects.find(x=>x.id===pId);
-        p.tasks.push({id:Date.now(), text:v, done:false});
-        await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); loadData();
-    }
-    async function toggleTask(pId, tId) {
-        const p = projects.find(x=>x.id===pId);
-        const t = p.tasks.find(x=>x.id.toString()===tId.toString());
-        t.done = !t.done; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render();
-    }
-    async function deleteTask(pId, tId) {
-        const p = projects.find(x=>x.id===pId);
-        p.tasks = p.tasks.filter(x=>x.id.toString()!==tId.toString());
-        await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render();
-    }
-    async function addInv(pId) {
-        const l = document.getElementById(`iL-${pId}`).value, a = document.getElementById(`iA-${pId}`).value; if(!l||!a) return;
-        const p = projects.find(x=>x.id===pId);
-        p.invoices.push({id:Date.now(), label:l, amount:a.replace(/\./g,''), status:'Pending'});
-        await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadData();
-    }
-    async function toggleInvStatus(pId, iId) {
-        const p = projects.find(x=>x.id===pId);
-        const i = p.invoices.find(x=>x.id.toString()===iId.toString());
-        i.status = i.status === 'Pending' ? 'Paid' : 'Pending';
-        await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadData();
-    }
-    async function deleteInv(pId, iId) {
-        const p = projects.find(x=>x.id===pId);
-        p.invoices = p.invoices.filter(x=>x.id.toString()!==iId.toString());
-        await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadData();
-    }
+    function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
 
-    // Modal Edit Boilerplate
-    let curEdit = {};
-    function openEditTaskModal(pId, tId) {
-        const t = projects.find(x=>x.id===pId).tasks.find(x=>x.id.toString()===tId.toString());
-        curEdit = {pId, tId}; document.getElementById('editTaskText').value = t.text;
-        document.getElementById('editTaskModal').style.display='flex';
-        document.getElementById('saveEditTaskBtn').onclick = async () => {
-            const p = projects.find(x=>x.id===curEdit.pId);
-            p.tasks.find(x=>x.id.toString()===curEdit.tId.toString()).text = document.getElementById('editTaskText').value;
-            await sb.from('projects').update({tasks:p.tasks}).eq('id',curEdit.pId);
-            document.getElementById('editTaskModal').style.display='none'; render();
-        }
-    }
-    function openEditInvModal(pId, iId) {
-        const i = projects.find(x=>x.id===pId).invoices.find(x=>x.id.toString()===iId.toString());
-        curEdit = {pId, iId}; document.getElementById('editInvLabel').value = i.label;
-        document.getElementById('editInvAmount').value = formatRupiah(i.amount);
-        document.getElementById('editInvModal').style.display='flex';
-        document.getElementById('saveEditInvBtn').onclick = async () => {
-            const p = projects.find(x=>x.id===curEdit.pId);
-            const inv = p.invoices.find(x=>x.id.toString()===curEdit.iId.toString());
-            inv.label = document.getElementById('editInvLabel').value;
-            inv.amount = document.getElementById('editInvAmount').value.replace(/\./g,'');
-            await sb.from('projects').update({invoices:p.invoices}).eq('id',curEdit.pId);
-            document.getElementById('editInvModal').style.display='none'; loadData();
-        }
-    }
+    // SHARED HANDLERS
+    async function addTask(pId) { const v = document.getElementById(`tIn-${pId}`).value; if(!v) return; const p = projects.find(x=>x.id===pId); p.tasks.push({id:Date.now(), text:v, done:false}); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); loadAll(); }
+    async function toggleTask(pId, tId) { const p = projects.find(x=>x.id===pId); const t = p.tasks.find(x=>x.id.toString()===tId.toString()); t.done = !t.done; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render(); }
+    async function deleteTask(pId, tId) { const p = projects.find(x=>x.id===pId); p.tasks = p.tasks.filter(x=>x.id.toString()!==tId.toString()); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render(); }
+    async function addInv(pId) { const l = document.getElementById(`iL-${pId}`).value, a = document.getElementById(`iA-${pId}`).value; if(!l||!a) return; const p = projects.find(x=>x.id===pId); p.invoices.push({id:Date.now(), label:l, amount:a.replace(/\./g,''), status:'Pending'}); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(); }
+    async function toggleInvStatus(pId, iId) { const p = projects.find(x=>x.id===pId); const i = p.invoices.find(x=>x.id.toString()===iId.toString()); i.status = i.status === 'Pending' ? 'Paid' : 'Pending'; await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(); }
+    async function deleteInv(pId, iId) { const p = projects.find(x=>x.id===pId); p.invoices = p.invoices.filter(x=>x.id.toString()!==iId.toString()); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(); }
 
+    function openModal() { document.getElementById('pName').value = ""; document.getElementById('pClient').value = ""; document.getElementById('projectModal').style.display = 'flex'; }
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
 
-    loadData();
+    loadAll();
 </script>
 </body>
 </html>
