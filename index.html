@@ -26,32 +26,37 @@
         .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .dashboard-wrapper { grid-template-columns: 220px 1fr 320px; align-items: start; } }
 
-        /* DAILY TASKS (SHRINKABLE) */
-        .daily-grind { background: #fffbeb; border: 2px solid #fde68a; border-radius: var(--radius); overflow: hidden; margin-bottom: 25px; transition: 0.3s; }
-        .daily-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-        .daily-header h3 { font-weight: 800; color: #92400e; margin: 0; }
-        .daily-content { padding: 0 20px 20px 20px; display: none; animation: slideDown 0.3s ease; }
+        /* DAILY TASKS */
+        .daily-grind { background: #fffbeb; border: 2px solid #fde68a; border-radius: var(--radius); overflow: hidden; margin-bottom: 25px; }
+        .daily-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .daily-content { padding: 0 20px 20px 20px; display: none; }
         .daily-grind.expanded .daily-content { display: block; }
         .daily-task-row { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 12px; padding: 10px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1px solid #fde68a; }
 
-        /* PROJECT CARDS */
+        /* CARDS & GROUPING */
         .client-nav { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 10px; }
         @media (min-width: 1024px) { .client-nav { flex-direction: column; position: sticky; top: 20px; } }
         .nav-item { padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; border: 1.5px solid #e2e8f0; background: white; color: var(--gray); white-space: nowrap; }
         .nav-item.active { background: var(--dark); color: white; border-color: var(--dark); }
-        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; position: relative; }
+        
+        .client-header { font-size: 11px; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+        .client-header::after { content: ""; flex: 1; height: 1.5px; background: #e2e8f0; }
+
+        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
         .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
         .card.expanded .card-body { display: block; }
+        
         .inner-content { max-width: 650px; }
         .item-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
         .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
+        
+        /* DOCUMENT ROW */
         .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; position: relative; }
-
+        
         /* GRADING */
         .grading-yellow { border-left: 10px solid var(--warning) !important; }
         .grading-red { border-left: 10px solid var(--danger) !important; }
-        .grading-complete { border-left: 10px solid var(--success) !important; }
 
         /* SIDEBAR */
         .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; border: 1.5px solid #e2e8f0; margin-bottom: 20px; }
@@ -60,20 +65,22 @@
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
         .hour { width: 3px; height: 15px; } .min { width: 2px; height: 22px; } .sec { width: 1px; height: 26px; background: #ef4444; }
 
-        /* BUTTONS */
+        /* UI ELEMENTS */
         .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-p { background: var(--dark); color: white; }
         .btn-ghost { background: #f1f5f9; color: var(--gray); border: 1px solid #e2e8f0; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
-        .pending { background: #fee2e2; color: #991b1b; } .paid { background: #dcfce7; color: #166534; }
-        .status-ok { background: #dcfce7; color: #166534; } .status-expired { background: #fee2e2; color: #991b1b; }
+        input, textarea { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; margin-bottom: 10px; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
+        .status-ok { background: #dcfce7; color: #166534; } 
+        .status-expired { background: #fee2e2; color: #991b1b; }
 
-        /* MODAL */
+        /* MODAL FIXED */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 95%; max-width: 450px; }
+        .modal-content input { display: block; width: 100%; }
+        
         .summary-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid #f1f5f9; }
         #progress-bar { height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; z-index: 9999; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -96,19 +103,18 @@
 
     <div class="dashboard-wrapper">
         <div class="client-nav" id="clientNav"></div>
-
         <div class="workspace">
-            <!-- Kerjaan Harian Cuy! (Shrinkable) -->
+            <!-- Daily Section -->
             <div id="dailyGrind" class="daily-grind">
                 <div class="daily-header" onclick="toggleDailySection()">
-                    <h3>Kerjaan Harian Cuy! ⚡</h3>
+                    <h3 style="font-weight: 800; color: #92400e;">Kerjaan Harian Cuy! ⚡</h3>
                     <div id="dailyCount" style="font-size:10px; font-weight:800; background:#f59e0b; color:white; padding:2px 8px; border-radius:20px">0 Tasks</div>
                 </div>
                 <div class="daily-content">
                     <div id="dailyTaskList"></div>
                     <div style="display:grid; grid-template-columns: 1fr auto auto; gap:8px; margin-top:10px">
-                        <input type="text" id="dailyInput" placeholder="Ngapain kita hari ini?">
-                        <input type="date" id="dailyDate" style="width:130px">
+                        <input type="text" id="dailyInput" placeholder="Ngapain kita hari ini?" style="margin:0">
+                        <input type="date" id="dailyDate" style="width:130px; margin:0">
                         <button class="btn btn-p" onclick="addDailyTask()" style="background:#92400e">Sikat!</button>
                     </div>
                 </div>
@@ -117,12 +123,13 @@
             <div id="projectList"></div>
             <div id="documentList" style="display:none"></div>
         </div>
-
         <div class="sidebar">
+            <!-- Clock -->
             <div class="sidebar-card clock-box">
                 <div class="clock"><div class="hand hour" id="hourHand"></div><div class="hand min" id="minHand"></div><div class="hand sec" id="secHand"></div></div>
                 <div id="digitalTime" style="font-weight: 800; font-size: 14px;">00:00:00</div>
             </div>
+            <!-- Cuan -->
             <div class="sidebar-card">
                 <div style="font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase;">💰 Cuan Tracker</div>
                 <div class="summary-box">
@@ -146,9 +153,37 @@
     </div>
 </div>
 
-<!-- MODALS -->
-<div id="projectModal" class="modal"><div class="modal-content"><h2 style="font-weight:800; margin-bottom:15px">Gassken Project Baru! 🚀</h2><input type="text" id="pName" placeholder="Nama Project"><input type="text" id="pClient" placeholder="Siapa Client-nya?" style="margin-top:10px"><div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">MULAI</label><input type="date" id="pStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">DEADLINE</label><input type="date" id="pEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('projectModal')">Batal</button><button class="btn btn-p" onclick="createProject()">Sikat!</button></div></div></div>
-<div id="docModal" class="modal"><div class="modal-content"><h2 id="docModalTitle" style="font-weight:800; margin-bottom:15px">Arsip Dokumen 📄</h2><input type="text" id="dName" placeholder="Nama Dokumen"><input type="text" id="dClient" placeholder="Client Mana?" style="margin-top:10px"><div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">DARI</label><input type="date" id="dStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">SAMPAI</label><input type="date" id="dEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('docModal')">Batal</button><button class="btn btn-p" id="saveDocBtn">Gassken!</button></div></div></div>
+<!-- MODAL PROJECT -->
+<div id="projectModal" class="modal"><div class="modal-content">
+    <h2 style="font-weight:800; margin-bottom:15px">Gassken Project Baru! 🚀</h2>
+    <input type="text" id="pName" placeholder="Nama Project">
+    <input type="text" id="pClient" placeholder="Siapa Client-nya?">
+    <div style="display:flex; gap:10px; margin-top:5px">
+        <div style="flex:1"><label style="font-size:9px;font-weight:800;color:var(--gray)">MULAI</label><input type="date" id="pStart"></div>
+        <div style="flex:1"><label style="font-size:9px;font-weight:800;color:var(--gray)">DEADLINE</label><input type="date" id="pEnd"></div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
+        <button class="btn btn-ghost" onclick="closeModal('projectModal')">Batal</button>
+        <button class="btn btn-p" onclick="createProject()">Sikat!</button>
+    </div>
+</div></div>
+
+<!-- MODAL DOCUMENT -->
+<div id="docModal" class="modal"><div class="modal-content">
+    <h2 id="docModalTitle" style="font-weight:800; margin-bottom:15px">Arsip Dokumen 📄</h2>
+    <input type="text" id="dName" placeholder="Nama Dokumen (NIB, SIUP, dll)">
+    <input type="text" id="dClient" placeholder="Punya Client Mana?">
+    <div style="display:flex; gap:10px; margin-top:5px">
+        <div style="flex:1"><label style="font-size:9px;font-weight:800;color:var(--gray)">DARI</label><input type="date" id="dStart"></div>
+        <div style="flex:1"><label style="font-size:9px;font-weight:800;color:var(--gray)">SAMPAI (Opt)</label><input type="date" id="dEnd"></div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
+        <button class="btn btn-ghost" onclick="closeModal('docModal')">Batal</button>
+        <button class="btn btn-p" id="saveDocBtn">Gassken!</button>
+    </div>
+</div></div>
+
+<!-- Modals Edit -->
 <div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Tugas</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editTaskModal')">Batal</button><button class="btn btn-p" id="saveEditTaskBtn">Update Sip</button></div></div></div>
 <div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:10px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editInvModal')">Batal</button><button class="btn btn-p" id="saveEditInvBtn">Update Sip</button></div></div></div>
 
@@ -207,17 +242,15 @@
         await sb.from('daily_tasks').insert([{ task_text: text, due_date: document.getElementById('dailyDate').value || null }]);
         loadAll(true);
     }
-
     async function completeDaily(id) {
         await sb.from('daily_tasks').update({ is_done: true }).eq('id', id);
         loadAll(true);
     }
-
     function renderDaily() {
         document.getElementById('dailyCount').innerText = dailyTasks.length + " Tasks";
         document.getElementById('dailyTaskList').innerHTML = dailyTasks.map(t => `
             <div class="daily-task-row">
-                <input type="checkbox" style="width:18px;height:18px" onclick="completeDaily('${t.id}')">
+                <input type="checkbox" style="width:18px;height:18px;cursor:pointer" onclick="completeDaily('${t.id}')">
                 <span style="font-weight:700">${t.task_text}</span>
                 <span style="font-size:10px; color:gray; font-weight:800">${t.due_date ? '📅 ' + t.due_date : ''}</span>
                 <button class="btn btn-ghost" style="padding:4px; color:var(--danger)" onclick="completeDaily('${t.id}')">×</button>
@@ -227,16 +260,15 @@
 
     // PROJECTS & DOCS
     async function createProject() {
-        const n = document.getElementById('pName').value;
+        const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client";
         if(!n) return alert("Nama wajib!");
-        await sb.from('projects').insert([{ name:n, client:document.getElementById('pClient').value || "No Client", start_date:document.getElementById('pStart').value, end_date:document.getElementById('pEnd').value, tasks:[], invoices:[], is_completed:false }]);
+        await sb.from('projects').insert([{ name:n, client:c, start_date:document.getElementById('pStart').value, end_date:document.getElementById('pEnd').value, tasks:[], invoices:[], is_completed:false }]);
         closeModal('projectModal'); loadAll();
     }
-
     async function createDoc() {
-        const n = document.getElementById('dName').value;
+        const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client";
         if(!n) return alert("Nama wajib!");
-        await sb.from('client_documents').insert([{ doc_name:n, client:document.getElementById('dClient').value || "No Client", start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value || null }]);
+        await sb.from('client_documents').insert([{ doc_name:n, client:c, start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value || null }]);
         closeModal('docModal'); loadAll();
     }
 
@@ -267,6 +299,22 @@
         document.getElementById('urgentFeed').innerHTML = alerts.join('') || "Semua aman...";
     }
 
+    function renderNav() {
+        const nav = document.getElementById('clientNav');
+        const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
+        nav.innerHTML = cList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
+    }
+
+    function switchView(v) {
+        currentView = v;
+        document.getElementById('v-projects').classList.toggle('active', v === 'projects');
+        document.getElementById('v-docs').classList.toggle('active', v === 'docs');
+        document.getElementById('projectList').style.display = v === 'projects' ? 'block' : 'none';
+        document.getElementById('documentList').style.display = v === 'docs' ? 'block' : 'none';
+        document.getElementById('dailyGrind').style.display = v === 'projects' ? 'block' : 'none';
+        render();
+    }
+
     function render() { if(currentView === 'projects') renderProjects(); else renderDocs(); }
 
     function renderProjects() {
@@ -292,8 +340,6 @@
                         <div style="font-size:9px; font-weight:800; color:var(--gray)">💸 INVOICING</div>
                         ${(p.invoices || []).map(i => `<div class="item-row inv-row"><span style="font-weight:700">${i.label}</span><span style="color:#4f46e5; font-weight:800">IDR ${formatRupiah(i.amount)}</span><span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span><div style="display:flex; gap:4px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button></div></div>`).join('')}
                         <div style="display:flex; gap:8px; margin-top:10px"><input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5"><input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><button class="btn btn-p" onclick="addInv('${p.id}')">Save</button></div>
-                        <div style="font-size:9px; font-weight:800; color:var(--gray); margin-top:15px">📝 NOTES</div>
-                        <textarea onblur="sb.from('projects').update({notes:this.value}).eq('id','${p.id}')">${p.notes || ''}</textarea>
                         <div style="display:flex; justify-content:space-between; margin-top:20px">
                             <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('projects').delete().eq('id','${p.id}').then(()=>loadAll())">Hapus</button>
                             <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="sb.from('projects').update({is_completed:!${p.is_completed}}).eq('id','${p.id}').then(()=>loadAll())">${p.is_completed?'Buka Lagi':'Beres ✅'}</button>
@@ -309,27 +355,35 @@
         const container = document.getElementById('documentList');
         let filtered = documents;
         if(filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
+        
+        // Grouping Docs per Client
+        const grouped = filtered.reduce((acc, d) => { const c = d.client || "No Client"; if(!acc[c]) acc[c] = []; acc[c].push(d); return acc; }, {});
+        
         let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px"><h3 style="font-weight:800">CLIENT DOCS 📂</h3><button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button></div>`;
-        h += filtered.map(d => {
-            const today = new Date().setHours(0,0,0,0);
-            let grading = '', statusTxt = 'Masih Idup', statusCls = 'status-ok';
-            if(d.end_date) {
-                const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
-                if(diff <= 30) grading = 'grading-red', statusTxt = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusCls = (diff <= 0 ? 'status-expired' : 'status-ok');
-                else if(diff <= 60) grading = 'grading-yellow';
-            }
-            return `<div class="doc-row ${grading}">
-                <div><div style="font-size:8px; color:var(--gray)">DOC</div><b>${d.doc_name}</b></div>
-                <div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div>
-                <div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div>
-                <div><span class="badge ${statusCls}">${statusTxt}</span></div>
-                <div style="display:flex; gap:5px"><button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div>
-            </div>`;
-        }).join('') || "<p style='color:gray;text-align:center;padding:40px'>Belum ada dokumen.</p>";
-        container.innerHTML = h;
+        
+        for(const client in grouped) {
+            h += `<div class="client-header">${client}</div>`;
+            h += grouped[client].map(d => {
+                const today = new Date().setHours(0,0,0,0);
+                let grading = '', statusTxt = 'Masih Idup', statusCls = 'status-ok';
+                if(d.end_date) {
+                    const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
+                    if(diff <= 30) grading = 'grading-red', statusTxt = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusCls = (diff <= 0 ? 'status-expired' : 'status-ok');
+                    else if(diff <= 60) grading = 'grading-yellow';
+                }
+                return `<div class="doc-row ${grading}">
+                    <div><div style="font-size:8px; color:var(--gray)">DOC</div><b>${d.doc_name}</b></div>
+                    <div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div>
+                    <div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div>
+                    <div><span class="badge ${statusCls}">${statusTxt}</span></div>
+                    <div style="display:flex; gap:5px"><button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div>
+                </div>`;
+            }).join('');
+        }
+        container.innerHTML = h || "<p style='color:gray;text-align:center;padding:40px'>Belum ada dokumen.</p>";
     }
 
-    // HANDLERS (Simplified for stability)
+    // HANDLERS
     function toggleCard(id) { projects = projects.map(p => ({ ...p, expanded: p.id === id ? !p.expanded : false })); render(); }
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
@@ -343,20 +397,6 @@
         await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); render(); updateSummary(); 
     }
     async function deleteInv(pId, iId) { const p=projects.find(x=>x.id===pId); p.invoices=p.invoices.filter(x=>x.id.toString()!==iId.toString()); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(true); }
-    function renderNav() {
-        const nav = document.getElementById('clientNav');
-        const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
-        nav.innerHTML = cList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
-    }
-    function switchView(v) {
-        currentView = v;
-        document.getElementById('v-projects').classList.toggle('active', v === 'projects');
-        document.getElementById('v-docs').classList.toggle('active', v === 'docs');
-        document.getElementById('projectList').style.display = v === 'projects' ? 'block' : 'none';
-        document.getElementById('documentList').style.display = v === 'docs' ? 'block' : 'none';
-        document.getElementById('dailyGrind').style.display = v === 'projects' ? 'block' : 'none';
-        render();
-    }
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
         document.getElementById('editTaskText').value = t.text;
