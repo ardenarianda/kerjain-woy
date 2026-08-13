@@ -18,54 +18,62 @@
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h1 { font-size: 26px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
         
-        /* LAYOUT */
+        /* VIEW SWITCHER */
         .view-switcher { display: flex; background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 20px; width: fit-content; }
         .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 11px; color: var(--gray); transition: 0.2s; }
         .view-btn.active { background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        
         .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .dashboard-wrapper { grid-template-columns: 220px 1fr 320px; align-items: start; } }
 
-        /* DAILY TASKS SECTION */
-        .daily-grind { background: #fffbeb; border: 2px solid #fde68a; border-radius: var(--radius); padding: 20px; margin-bottom: 25px; }
+        /* DAILY TASKS (SHRINKABLE) */
+        .daily-grind { background: #fffbeb; border: 2px solid #fde68a; border-radius: var(--radius); overflow: hidden; margin-bottom: 25px; transition: 0.3s; }
+        .daily-header { padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .daily-header h3 { font-weight: 800; color: #92400e; margin: 0; }
+        .daily-content { padding: 0 20px 20px 20px; display: none; animation: slideDown 0.3s ease; }
+        .daily-grind.expanded .daily-content { display: block; }
         .daily-task-row { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 12px; padding: 10px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1px solid #fde68a; }
 
-        /* CARDS */
+        /* PROJECT CARDS */
         .client-nav { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 10px; }
         @media (min-width: 1024px) { .client-nav { flex-direction: column; position: sticky; top: 20px; } }
         .nav-item { padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; border: 1.5px solid #e2e8f0; background: white; color: var(--gray); white-space: nowrap; }
         .nav-item.active { background: var(--dark); color: white; border-color: var(--dark); }
-        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
+        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; position: relative; }
         .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
         .card.expanded .card-body { display: block; }
         .inner-content { max-width: 650px; }
         .item-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
         .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
-        .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; }
+        .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; position: relative; }
 
+        /* GRADING */
         .grading-yellow { border-left: 10px solid var(--warning) !important; }
         .grading-red { border-left: 10px solid var(--danger) !important; }
         .grading-complete { border-left: 10px solid var(--success) !important; }
 
+        /* SIDEBAR */
         .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; border: 1.5px solid #e2e8f0; margin-bottom: 20px; }
         .clock-box { display: flex; flex-direction: column; align-items: center; background: #0f172a; color: white; border: none; }
         .clock { width: 70px; height: 70px; border: 2px solid white; border-radius: 50%; position: relative; margin-bottom: 10px; }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
         .hour { width: 3px; height: 15px; } .min { width: 2px; height: 22px; } .sec { width: 1px; height: 26px; background: #ef4444; }
 
+        /* BUTTONS */
         .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-p { background: var(--dark); color: white; }
         .btn-ghost { background: #f1f5f9; color: var(--gray); border: 1px solid #e2e8f0; }
-        input, textarea { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; }
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
         .pending { background: #fee2e2; color: #991b1b; } .paid { background: #dcfce7; color: #166534; }
         .status-ok { background: #dcfce7; color: #166534; } .status-expired { background: #fee2e2; color: #991b1b; }
 
+        /* MODAL */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 95%; max-width: 450px; }
         .summary-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid #f1f5f9; }
         #progress-bar { height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; z-index: 9999; }
-        .urgent-item { font-size: 11px; padding: 8px; border-radius: 8px; background: #f8fafc; margin-bottom: 5px; border-left: 4px solid var(--danger); font-weight: 700; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -90,14 +98,19 @@
         <div class="client-nav" id="clientNav"></div>
 
         <div class="workspace">
-            <!-- Kerjaan Harian Section -->
-            <div id="dailySection" class="daily-grind">
-                <h3 style="font-weight:800; margin-bottom:15px; color:#92400e">Kerjaan Harian Cuy! ⚡</h3>
-                <div id="dailyTaskList"></div>
-                <div style="display:grid; grid-template-columns: 1fr auto auto; gap:8px; margin-top:10px">
-                    <input type="text" id="dailyInput" placeholder="Ngapain kita hari ini?">
-                    <input type="date" id="dailyDate" style="width:130px">
-                    <button class="btn btn-p" onclick="addDailyTask()" style="background:#92400e">Sikat!</button>
+            <!-- Kerjaan Harian Cuy! (Shrinkable) -->
+            <div id="dailyGrind" class="daily-grind">
+                <div class="daily-header" onclick="toggleDailySection()">
+                    <h3>Kerjaan Harian Cuy! ⚡</h3>
+                    <div id="dailyCount" style="font-size:10px; font-weight:800; background:#f59e0b; color:white; padding:2px 8px; border-radius:20px">0 Tasks</div>
+                </div>
+                <div class="daily-content">
+                    <div id="dailyTaskList"></div>
+                    <div style="display:grid; grid-template-columns: 1fr auto auto; gap:8px; margin-top:10px">
+                        <input type="text" id="dailyInput" placeholder="Ngapain kita hari ini?">
+                        <input type="date" id="dailyDate" style="width:130px">
+                        <button class="btn btn-p" onclick="addDailyTask()" style="background:#92400e">Sikat!</button>
+                    </div>
                 </div>
             </div>
 
@@ -144,9 +157,9 @@
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
     const sb = supabase.createClient(SB_URL, SB_KEY);
 
-    let projects = [], documents = [], dailyTasks = [], currentView = 'projects', filterClient = "All Projects", showCompleted = false;
+    let projects = [], documents = [], dailyTasks = [], currentView = 'projects', filterClient = "All Projects", showCompleted = false, dailyExpanded = false;
 
-    // Clock
+    // Clock Animation
     setInterval(() => {
         const d = new Date();
         document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${d.getSeconds()*6}deg)`;
@@ -157,8 +170,14 @@
 
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
+    
+    function toggleDailySection() {
+        dailyExpanded = !dailyExpanded;
+        document.getElementById('dailyGrind').classList.toggle('expanded', dailyExpanded);
+    }
+
     const openModal = (id) => { 
-        if(id === 'projectModal' || id === 'docModal') document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
+        document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
         if(id === 'docModal') { document.getElementById('docModalTitle').innerText = "Arsip Dokumen 📄"; document.getElementById('saveDocBtn').onclick = createDoc; }
         document.getElementById(id).style.display = 'flex'; 
     };
@@ -171,8 +190,8 @@
             const { data: dData } = await sb.from('client_documents').select('*').order('created_at', { ascending: false });
             const { data: dailyData } = await sb.from('daily_tasks').select('*').eq('is_done', false).order('created_at', { ascending: true });
             
-            const currentExp = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
-            projects = (pData || []).map(p => ({ ...p, expanded: currentExp.includes(p.id) }));
+            const expIds = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
+            projects = (pData || []).map(p => ({ ...p, expanded: expIds.includes(p.id) }));
             documents = dData || [];
             dailyTasks = dailyData || [];
             
@@ -181,47 +200,43 @@
         loader(false);
     }
 
-    // DAILY TASKS ACTIONS
+    // DAILY TASKS
     async function addDailyTask() {
         const text = document.getElementById('dailyInput').value;
-        const date = document.getElementById('dailyDate').value;
         if(!text) return;
-        await sb.from('daily_tasks').insert([{ task_text: text, due_date: date || null }]);
-        document.getElementById('dailyInput').value = "";
-        document.getElementById('dailyDate').value = "";
+        await sb.from('daily_tasks').insert([{ task_text: text, due_date: document.getElementById('dailyDate').value || null }]);
         loadAll(true);
     }
 
     async function completeDaily(id) {
-        // Efek "hilang" (update di DB lalu filter di UI)
         await sb.from('daily_tasks').update({ is_done: true }).eq('id', id);
         loadAll(true);
     }
 
     function renderDaily() {
-        const list = document.getElementById('dailyTaskList');
-        list.innerHTML = dailyTasks.map(t => `
+        document.getElementById('dailyCount').innerText = dailyTasks.length + " Tasks";
+        document.getElementById('dailyTaskList').innerHTML = dailyTasks.map(t => `
             <div class="daily-task-row">
-                <input type="checkbox" style="width:18px; height:18px; cursor:pointer" onclick="completeDaily('${t.id}')">
+                <input type="checkbox" style="width:18px;height:18px" onclick="completeDaily('${t.id}')">
                 <span style="font-weight:700">${t.task_text}</span>
                 <span style="font-size:10px; color:gray; font-weight:800">${t.due_date ? '📅 ' + t.due_date : ''}</span>
-                <button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="completeDaily('${t.id}')">×</button>
+                <button class="btn btn-ghost" style="padding:4px; color:var(--danger)" onclick="completeDaily('${t.id}')">×</button>
             </div>
         `).join('');
     }
 
-    // PROJECT & DOC ACTIONS
+    // PROJECTS & DOCS
     async function createProject() {
-        const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client";
+        const n = document.getElementById('pName').value;
         if(!n) return alert("Nama wajib!");
-        await sb.from('projects').insert([{ name:n, client:c, start_date:document.getElementById('pStart').value, end_date:document.getElementById('pEnd').value, tasks:[], invoices:[], is_completed:false }]);
+        await sb.from('projects').insert([{ name:n, client:document.getElementById('pClient').value || "No Client", start_date:document.getElementById('pStart').value, end_date:document.getElementById('pEnd').value, tasks:[], invoices:[], is_completed:false }]);
         closeModal('projectModal'); loadAll();
     }
 
     async function createDoc() {
-        const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client";
+        const n = document.getElementById('dName').value;
         if(!n) return alert("Nama wajib!");
-        await sb.from('client_documents').insert([{ doc_name:n, client:c, start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value || null }]);
+        await sb.from('client_documents').insert([{ doc_name:n, client:document.getElementById('dClient').value || "No Client", start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value || null }]);
         closeModal('docModal'); loadAll();
     }
 
@@ -245,33 +260,11 @@
                 if(diff <= 10) alerts.push(`<div class="urgent-item">Proj: ${p.name} (${diff <= 0 ? 'OVERDUE' : diff + 'd'})</div>`);
             }
         });
-        documents.forEach(d => {
-            if(d.end_date) {
-                const diff = Math.ceil((new Date(d.end_date) - new Date().setHours(0,0,0,0)) / 86400000);
-                if(diff <= 60) alerts.push(`<div class="urgent-item" style="border-left-color:${diff <= 30 ? 'var(--danger)' : 'var(--warning)'}">Doc: ${d.doc_name} (${diff <= 0 ? 'BASI' : diff + 'd'})</div>`);
-            }
-        });
         document.getElementById('totalPaid').innerText = "IDR " + formatRupiah(tPaid);
         document.getElementById('totalPending').innerText = "IDR " + formatRupiah(tPend);
         document.getElementById('monthPaid').innerText = "IDR " + formatRupiah(mPaid);
         document.getElementById('yearPaid').innerText = "IDR " + formatRupiah(yPaid);
         document.getElementById('urgentFeed').innerHTML = alerts.join('') || "Semua aman...";
-    }
-
-    function renderNav() {
-        const nav = document.getElementById('clientNav');
-        const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
-        nav.innerHTML = cList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
-    }
-
-    function switchView(v) {
-        currentView = v;
-        document.getElementById('v-projects').classList.toggle('active', v === 'projects');
-        document.getElementById('v-docs').classList.toggle('active', v === 'docs');
-        document.getElementById('projectList').style.display = v === 'projects' ? 'block' : 'none';
-        document.getElementById('documentList').style.display = v === 'docs' ? 'block' : 'none';
-        document.getElementById('dailySection').style.display = v === 'projects' ? 'block' : 'none';
-        render();
     }
 
     function render() { if(currentView === 'projects') renderProjects(); else renderDocs(); }
@@ -330,16 +323,13 @@
                 <div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div>
                 <div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div>
                 <div><span class="badge ${statusCls}">${statusTxt}</span></div>
-                <div style="display:flex; gap:5px">
-                    <button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button>
-                    <button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button>
-                </div>
+                <div style="display:flex; gap:5px"><button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div>
             </div>`;
         }).join('') || "<p style='color:gray;text-align:center;padding:40px'>Belum ada dokumen.</p>";
         container.innerHTML = h;
     }
 
-    // SHARED HANDLERS
+    // HANDLERS (Simplified for stability)
     function toggleCard(id) { projects = projects.map(p => ({ ...p, expanded: p.id === id ? !p.expanded : false })); render(); }
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
@@ -353,18 +343,30 @@
         await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); render(); updateSummary(); 
     }
     async function deleteInv(pId, iId) { const p=projects.find(x=>x.id===pId); p.invoices=p.invoices.filter(x=>x.id.toString()!==iId.toString()); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(true); }
-
-    let curE = {};
+    function renderNav() {
+        const nav = document.getElementById('clientNav');
+        const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
+        nav.innerHTML = cList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
+    }
+    function switchView(v) {
+        currentView = v;
+        document.getElementById('v-projects').classList.toggle('active', v === 'projects');
+        document.getElementById('v-docs').classList.toggle('active', v === 'docs');
+        document.getElementById('projectList').style.display = v === 'projects' ? 'block' : 'none';
+        document.getElementById('documentList').style.display = v === 'docs' ? 'block' : 'none';
+        document.getElementById('dailyGrind').style.display = v === 'projects' ? 'block' : 'none';
+        render();
+    }
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
-        curE = {pId, tId}; document.getElementById('editTaskText').value = t.text;
+        document.getElementById('editTaskText').value = t.text;
         openModal('editTaskModal'); document.getElementById('saveEditTaskBtn').onclick = async () => {
             t.text = document.getElementById('editTaskText').value; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render();
         }
     }
     function openEditInvModal(pId, iId) {
         const p=projects.find(x=>x.id===pId); const i=p.invoices.find(x=>x.id.toString()===iId.toString());
-        curE = {pId, iId}; document.getElementById('editInvLabel').value = i.label; document.getElementById('editInvAmount').value = formatRupiah(i.amount);
+        document.getElementById('editInvLabel').value = i.label; document.getElementById('editInvAmount').value = formatRupiah(i.amount);
         openModal('editInvModal'); document.getElementById('saveEditInvBtn').onclick = async () => {
             i.label = document.getElementById('editInvLabel').value; i.amount = document.getElementById('editInvAmount').value.replace(/\./g,'');
             await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); closeModal('editInvModal'); loadAll(true);
@@ -372,10 +374,8 @@
     }
     function openEditDocModal(id) {
         const d = documents.find(x => x.id === id);
-        document.getElementById('dName').value = d.doc_name;
-        document.getElementById('dClient').value = d.client;
-        document.getElementById('dStart').value = d.start_date;
-        document.getElementById('dEnd').value = d.end_date || '';
+        document.getElementById('dName').value = d.doc_name; document.getElementById('dClient').value = d.client;
+        document.getElementById('dStart').value = d.start_date; document.getElementById('dEnd').value = d.end_date || '';
         document.getElementById('docModalTitle').innerText = "Edit Dokumen 📄";
         document.getElementById('saveDocBtn').onclick = async () => {
             await sb.from('client_documents').update({ doc_name: document.getElementById('dName').value, client: document.getElementById('dClient').value, start_date: document.getElementById('dStart').value, end_date: document.getElementById('dEnd').value || null }).eq('id', id);
