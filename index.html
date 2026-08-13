@@ -33,7 +33,7 @@
         .inner-content { max-width: 650px; }
         .item-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
         .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
-        .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; }
+        .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; position: relative; overflow: hidden; }
         .grading-yellow { border-left: 10px solid var(--warning) !important; }
         .grading-red { border-left: 10px solid var(--danger) !important; }
         .grading-complete { border-left: 10px solid var(--success) !important; }
@@ -42,20 +42,22 @@
         .clock { width: 70px; height: 70px; border: 2px solid white; border-radius: 50%; position: relative; margin-bottom: 10px; }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
         .hour { width: 3px; height: 15px; } .min { width: 2px; height: 22px; } .sec { width: 1px; height: 26px; background: #ef4444; }
-        .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; }
+        .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-p { background: var(--dark); color: white; }
         .btn-ghost { background: #f1f5f9; color: var(--gray); border: 1px solid #e2e8f0; }
-        input, textarea { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif; font-weight: 600; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+        input, textarea { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; }
         .pending { background: #fee2e2; color: #991b1b; } .paid { background: #dcfce7; color: #166534; }
+        .status-ok { background: #dcfce7; color: #166534; } .status-expired { background: #fee2e2; color: #991b1b; }
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 95%; max-width: 450px; }
         .summary-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid #f1f5f9; }
+        #progress-bar { height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; z-index: 9999; }
     </style>
 </head>
 <body>
 
-<div id="progress-bar" style="height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; z-index: 9999;"></div>
+<div id="progress-bar"></div>
 
 <div class="container">
     <header>
@@ -89,14 +91,8 @@
                     <div id="totalPaid" style="font-weight:800; font-size:16px; color:var(--success)">IDR 0</div>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:10px">
-                    <div style="background:#f0fdf4; padding:8px; border-radius:8px">
-                        <div style="font-size:7px; font-weight:800">BULAN INI</div>
-                        <div id="monthPaid" style="font-weight:800; font-size:11px">0</div>
-                    </div>
-                    <div style="background:#f0fdf4; padding:8px; border-radius:8px">
-                        <div style="font-size:7px; font-weight:800">TAHUN INI</div>
-                        <div id="yearPaid" style="font-weight:800; font-size:11px">0</div>
-                    </div>
+                    <div style="background:#f0fdf4; padding:8px; border-radius:8px"><div style="font-size:7px; font-weight:800">BULAN INI</div><div id="monthPaid" style="font-weight:800; font-size:11px">0</div></div>
+                    <div style="background:#f0fdf4; padding:8px; border-radius:8px"><div style="font-size:7px; font-weight:800">TAHUN INI</div><div id="yearPaid" style="font-weight:800; font-size:11px">0</div></div>
                 </div>
                 <div class="summary-box" style="border-color: #fee2e2;">
                     <div style="font-size:8px; font-weight:800">NYANGKUT (PENDING)</div>
@@ -111,37 +107,31 @@
     </div>
 </div>
 
-<!-- Modal Project -->
+<!-- Modal Create Project -->
 <div id="projectModal" class="modal"><div class="modal-content">
     <h2 style="font-weight:800; margin-bottom:15px">Gassken Project Baru! 🚀</h2>
     <input type="text" id="pName" placeholder="Nama Project">
     <input type="text" id="pClient" placeholder="Siapa Client-nya?" style="margin-top:10px">
-    <div style="display:flex; gap:10px; margin-top:15px">
-        <div style="flex:1"><label style="font-size:9px;font-weight:800">MULAI</label><input type="date" id="pStart"></div>
-        <div style="flex:1"><label style="font-size:9px;font-weight:800">DEADLINE</label><input type="date" id="pEnd"></div>
-    </div>
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px">
-        <button class="btn btn-ghost" onclick="closeModal('projectModal')">Batal</button>
-        <button class="btn btn-p" onclick="createProject()">Sikat!</button>
-    </div>
+    <div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">MULAI</label><input type="date" id="pStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">DEADLINE</label><input type="date" id="pEnd"></div></div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('projectModal')">Batal</button><button class="btn btn-p" onclick="createProject()">Sikat!</button></div>
 </div></div>
 
-<!-- Modal Document -->
+<!-- Modal Document (Create & Edit) -->
 <div id="docModal" class="modal"><div class="modal-content">
-    <h2 style="font-weight:800; margin-bottom:15px">Arsip Dokumen 📄</h2>
-    <input type="text" id="dName" placeholder="Nama Dokumen">
+    <h2 id="docModalTitle" style="font-weight:800; margin-bottom:15px">Arsip Dokumen 📄</h2>
+    <input type="text" id="dName" placeholder="Nama Dokumen (NIB, SIUP, dll)">
     <input type="text" id="dClient" placeholder="Punya Client Mana?" style="margin-top:10px">
     <div style="display:flex; gap:10px; margin-top:15px">
         <div style="flex:1"><label style="font-size:9px;font-weight:800">DARI</label><input type="date" id="dStart"></div>
-        <div style="flex:1"><label style="font-size:9px;font-weight:800">SAMPAI (Opt)</label><input type="date" id="dEnd"></div>
+        <div style="flex:1"><label style="font-size:9px;font-weight:800">SAMPAI (Opsional)</label><input type="date" id="dEnd"></div>
     </div>
     <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px">
         <button class="btn btn-ghost" onclick="closeModal('docModal')">Batal</button>
-        <button class="btn btn-p" onclick="createDoc()">Simpan Berkas</button>
+        <button class="btn btn-p" id="saveDocBtn">Gassken!</button>
     </div>
 </div></div>
 
-<!-- Modal Edit -->
+<!-- Modal Edit (Task/Inv) -->
 <div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Tugas</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editTaskModal')">Batal</button><button class="btn btn-p" id="saveEditTaskBtn">Update Sip</button></div></div></div>
 <div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:10px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editInvModal')">Batal</button><button class="btn btn-p" id="saveEditInvBtn">Update Sip</button></div></div></div>
 
@@ -152,7 +142,6 @@
 
     let projects = [], documents = [], currentView = 'projects', filterClient = "All Projects", showCompleted = false;
 
-    // Clock Animation
     setInterval(() => {
         const d = new Date();
         document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${d.getSeconds()*6}deg)`;
@@ -163,7 +152,11 @@
 
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
-    const openModal = (id) => { document.getElementById(id).style.display = 'flex'; };
+    const openModal = (id) => { 
+        if(id === 'projectModal' || id === 'docModal') document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
+        if(id === 'docModal') document.getElementById('saveDocBtn').onclick = createDoc;
+        document.getElementById(id).style.display = 'flex'; 
+    };
     const closeModal = (id) => document.getElementById(id).style.display = 'none';
 
     async function loadAll(keepExpanded = false) {
@@ -171,20 +164,12 @@
         try {
             const { data: pData } = await sb.from('projects').select('*').order('created_at', { ascending: false });
             const { data: dData } = await sb.from('client_documents').select('*').order('created_at', { ascending: false });
-            
-            const expIds = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
-            projects = (pData || []).map(p => ({ ...p, expanded: expIds.includes(p.id) }));
+            const currentExp = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
+            projects = (pData || []).map(p => ({ ...p, expanded: currentExp.includes(p.id) }));
             documents = dData || [];
-            
             renderNav(); render(); updateSummary();
         } catch (e) { console.error(e); }
         loader(false);
-    }
-
-    function renderNav() {
-        const nav = document.getElementById('clientNav');
-        const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
-        nav.innerHTML = cList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
     }
 
     function switchView(v) {
@@ -196,6 +181,12 @@
         render();
     }
 
+    function renderNav() {
+        const nav = document.getElementById('clientNav');
+        const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
+        nav.innerHTML = cList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
+    }
+
     async function createProject() {
         const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client";
         if(!n) return alert("Nama wajib!");
@@ -205,8 +196,9 @@
 
     async function createDoc() {
         const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client";
+        const sd = document.getElementById('dStart').value, ed = document.getElementById('dEnd').value || null;
         if(!n) return alert("Nama wajib!");
-        await sb.from('client_documents').insert([{ doc_name:n, client:c, start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value }]);
+        await sb.from('client_documents').insert([{ doc_name:n, client:c, start_date:sd, end_date:ed }]);
         closeModal('docModal'); loadAll();
     }
 
@@ -230,22 +222,25 @@
                 if(diff <= 10) alerts.push(`<div class="urgent-item">Proj: ${p.name} (${diff <= 0 ? 'OVERDUE' : diff + 'd'})</div>`);
             }
         });
+        documents.forEach(d => {
+            if(d.end_date) {
+                const diff = Math.ceil((new Date(d.end_date) - new Date().setHours(0,0,0,0)) / 86400000);
+                if(diff <= 60) alerts.push(`<div class="urgent-item" style="border-left-color:${diff <= 30 ? 'var(--danger)' : 'var(--warning)'}">Doc: ${d.doc_name} (${diff <= 0 ? 'BASI' : diff + 'd'})</div>`);
+            }
+        });
         document.getElementById('totalPaid').innerText = "IDR " + formatRupiah(tPaid);
         document.getElementById('totalPending').innerText = "IDR " + formatRupiah(tPend);
         document.getElementById('monthPaid').innerText = "IDR " + formatRupiah(mPaid);
         document.getElementById('yearPaid').innerText = "IDR " + formatRupiah(yPaid);
-        document.getElementById('urgentFeed').innerHTML = alerts.join('') || "All clear...";
+        document.getElementById('urgentFeed').innerHTML = alerts.join('') || "Semua aman...";
     }
 
-    function render() {
-        if(currentView === 'projects') renderProjects(); else renderDocs();
-    }
+    function render() { if(currentView === 'projects') renderProjects(); else renderDocs(); }
 
     function renderProjects() {
         const container = document.getElementById('projectList');
         let filtered = projects.filter(p => showCompleted ? true : !p.is_completed);
         if(filterClient !== "All Projects") filtered = filtered.filter(p => p.client === filterClient);
-        
         const grouped = filtered.reduce((acc, p) => { const c = p.client || "No Client"; if(!acc[c]) acc[c] = []; acc[c].push(p); return acc; }, {});
         let html = "";
         for(const client in grouped) {
@@ -261,7 +256,7 @@
                         <input type="date" value="${p.reminder_date || ''}" onchange="sb.from('projects').update({reminder_date:this.value}).eq('id','${p.id}').then(()=>loadAll(true))" style="max-width:180px; margin-bottom:15px">
                         <div style="font-size:9px; font-weight:800; color:var(--gray)">📌 TASKS</div>
                         ${(p.tasks || []).map(t => `<div class="item-row"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask('${p.id}','${t.id}')"><span style="flex:1" class="${t.done?'text-content done':'text-content'}">${t.text}</span><div style="display:flex;gap:4px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditTaskModal('${p.id}','${t.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteTask('${p.id}','${t.id}')">×</button></div></div>`).join('')}
-                        <div style="display:flex; gap:8px; margin:10px 0"><input type="text" id="tIn-${p.id}" placeholder="Tambah tugas..."><button class="btn btn-p" onclick="addTask('${p.id}')">Sikat</button></div>
+                        <div style="display:flex; gap:8px; margin:10px 0"><input type="text" id="tIn-${p.id}" placeholder="Next step..."><button class="btn btn-p" onclick="addTask('${p.id}')">Sikat</button></div>
                         <div style="font-size:9px; font-weight:800; color:var(--gray)">💸 INVOICING</div>
                         ${(p.invoices || []).map(i => `<div class="item-row inv-row"><span style="font-weight:700">${i.label}</span><span style="color:#4f46e5; font-weight:800">IDR ${formatRupiah(i.amount)}</span><span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span><div style="display:flex; gap:4px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button></div></div>`).join('')}
                         <div style="display:flex; gap:8px; margin-top:10px"><input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5"><input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><button class="btn btn-p" onclick="addInv('${p.id}')">Save</button></div>
@@ -282,8 +277,23 @@
         if(filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
         let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px"><h3 style="font-weight:800">CLIENT DOCS 📂</h3><button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button></div>`;
         h += filtered.map(d => {
-            const isExp = d.end_date && new Date(d.end_date) < new Date().setHours(0,0,0,0);
-            return `<div class="doc-row"><div><div style="font-size:8px; color:var(--gray)">DOC</div><b>${d.doc_name}</b></div><div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div><div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div><div><span class="badge ${d.end_date?(isExp?'expired':'pending'):'lifetime'}">${d.end_date?(isExp?'Expired':'Active'):'Lifetime'}</span></div><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div>`;
+            const today = new Date().setHours(0,0,0,0);
+            let grading = '', statusTxt = 'Masih Idup', statusCls = 'status-ok';
+            if(d.end_date) {
+                const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
+                if(diff <= 30) grading = 'grading-red', statusTxt = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusCls = (diff <= 0 ? 'status-expired' : 'status-ok');
+                else if(diff <= 60) grading = 'grading-yellow';
+            }
+            return `<div class="doc-row ${grading}">
+                <div><div style="font-size:8px; color:var(--gray)">DOC</div><b>${d.doc_name}</b></div>
+                <div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div>
+                <div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div>
+                <div><span class="badge ${statusCls}">${statusTxt}</span></div>
+                <div style="display:flex; gap:5px">
+                    <button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button>
+                    <button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button>
+                </div>
+            </div>`;
         }).join('') || "<p style='color:gray;text-align:center;padding:40px'>Belum ada dokumen.</p>";
         container.innerHTML = h;
     }
@@ -307,20 +317,36 @@
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
         curE = {pId, tId}; document.getElementById('editTaskText').value = t.text;
-        openModal('editTaskModal');
-        document.getElementById('saveEditTaskBtn').onclick = async () => {
-            t.text = document.getElementById('editTaskText').value;
-            await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render();
+        openModal('editTaskModal'); document.getElementById('saveEditTaskBtn').onclick = async () => {
+            t.text = document.getElementById('editTaskText').value; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render();
         }
     }
     function openEditInvModal(pId, iId) {
         const p=projects.find(x=>x.id===pId); const i=p.invoices.find(x=>x.id.toString()===iId.toString());
         curE = {pId, iId}; document.getElementById('editInvLabel').value = i.label; document.getElementById('editInvAmount').value = formatRupiah(i.amount);
-        openModal('editInvModal');
-        document.getElementById('saveEditInvBtn').onclick = async () => {
+        openModal('editInvModal'); document.getElementById('saveEditInvBtn').onclick = async () => {
             i.label = document.getElementById('editInvLabel').value; i.amount = document.getElementById('editInvAmount').value.replace(/\./g,'');
             await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); closeModal('editInvModal'); loadAll(true);
         }
+    }
+
+    function openEditDocModal(id) {
+        const d = documents.find(x => x.id === id);
+        document.getElementById('dName').value = d.doc_name;
+        document.getElementById('dClient').value = d.client;
+        document.getElementById('dStart').value = d.start_date;
+        document.getElementById('dEnd').value = d.end_date || '';
+        document.getElementById('docModalTitle').innerText = "Edit Dokumen 📄";
+        document.getElementById('saveDocBtn').onclick = async () => {
+            await sb.from('client_documents').update({
+                doc_name: document.getElementById('dName').value,
+                client: document.getElementById('dClient').value,
+                start_date: document.getElementById('dStart').value,
+                end_date: document.getElementById('dEnd').value || null
+            }).eq('id', id);
+            closeModal('docModal'); loadAll();
+        };
+        document.getElementById('docModal').style.display = 'flex';
     }
 
     loadAll();
