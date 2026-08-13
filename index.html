@@ -13,13 +13,13 @@
             --warning: #f59e0b; --success: #16a34a; --radius: 12px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; font-size: 13px; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; font-size: 13px; font-weight: 500; }
         .container { max-width: 1400px; margin: 0 auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h1 { font-size: 26px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
         
         .view-switcher { display: flex; background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 20px; width: fit-content; }
-        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 11px; color: var(--gray); transition: 0.2s; }
+        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 12px; color: var(--gray); transition: 0.2s; }
         .view-btn.active { background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
         
         .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; }
@@ -38,19 +38,20 @@
         .daily-content { padding: 0 20px 20px 20px; display: none; }
         .daily-grind.expanded .daily-content { display: block; }
 
-        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
+        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; position: relative; }
         .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
         .card.expanded .card-body { display: block; }
-        .inner-content { max-width: 650px; }
+        .inner-content { max-width: 700px; }
 
-        /* ITEM ROW - FIXED ALIGNMENT */
         .item-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
         .text-content { flex: 1; display: flex; align-items: center; min-height: 24px; }
         .text-content.done { text-decoration: line-through; color: #94a3b8; }
         .check-box { width: 18px; height: 18px; cursor: pointer; margin: 0; }
 
-        /* DOC ITEM */
+        .doc-group { margin-bottom: 10px; }
+        .doc-group-content { display: none; margin-top: 10px; }
+        .doc-group.expanded .doc-group-content { display: block; }
         .doc-item-card { background: white; padding: 15px; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; display: flex; align-items: center; gap: 15px; border-left-width: 8px !important; }
 
         .grading-yellow { border-left: 10px solid var(--warning) !important; }
@@ -99,7 +100,6 @@
     <div class="dashboard-wrapper">
         <div class="client-nav" id="clientNav"></div>
         <div class="workspace">
-            <!-- Kerjaan Harian -->
             <div id="dailyGrind" class="daily-grind">
                 <div class="daily-header" onclick="toggleDailySection()">
                     <h3 style="font-weight: 800; color: #92400e;">Kerjaan Harian Cuy! ⚡</h3>
@@ -167,8 +167,13 @@
 
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
+    
+    // MODAL OPENER (FIX: PRE-FILL)
     const openModal = (id) => { 
-        document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
+        // Reset input hanya untuk modal Project Baru atau Doc Baru
+        if(id === 'projectModal' || id === 'docModal') {
+            document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
+        }
         if(id === 'docModal') { document.getElementById('docModalTitle').innerText = "Arsip Dokumen 📄"; document.getElementById('saveDocBtn').onclick = createDoc; }
         document.getElementById(id).style.display = 'flex'; 
     };
@@ -189,6 +194,7 @@
         loader(false);
     }
 
+    // DAILY ACTIONS
     async function addDailyTask() {
         const text = document.getElementById('dailyInput').value; if(!text) return;
         await sb.from('daily_tasks').insert([{ task_text: text, due_date: document.getElementById('dailyDate').value || null }]);
@@ -328,10 +334,10 @@
         container.innerHTML = h;
     }
 
+    // SHARED HANDLERS
     function toggleCard(id) { projects = projects.map(p => ({ ...p, expanded: p.id === id ? !p.expanded : false })); render(); }
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
-    
     async function addTask(pId) { const v=document.getElementById(`tIn-${pId}`).value; if(!v) return; const p=projects.find(x=>x.id===pId); p.tasks.push({id:Date.now(), text:v, done:false}); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); loadAll(true); }
     async function toggleTask(pId, tId) { const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString()); t.done=!t.done; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render(); }
     async function deleteTask(pId, tId) { const p=projects.find(x=>x.id===pId); p.tasks=p.tasks.filter(x=>x.id.toString()!==tId.toString()); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render(); }
@@ -344,19 +350,42 @@
     async function deleteInv(pId, iId) { const p=projects.find(x=>x.id===pId); p.invoices=p.invoices.filter(x=>x.id.toString()!==iId.toString()); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(true); }
     async function createProject() { const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client"; if(!n) return alert("Nama wajib!"); await sb.from('projects').insert([{ name:n, client:c, start_date:document.getElementById('pStart').value, end_date:document.getElementById('pEnd').value, tasks:[], invoices:[], is_completed:false }]); closeModal('projectModal'); loadAll(); }
     async function createDoc() { const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client"; if(!n) return alert("Nama wajib!"); await sb.from('client_documents').insert([{ doc_name:n, client:c, start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value || null }]); closeModal('docModal'); loadAll(); }
-
+    
+    // FIX: PRE-FILL EDIIT
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
-        document.getElementById('editTaskText').value = t.text;
-        openModal('editTaskModal'); document.getElementById('saveEditTaskBtn').onclick = async () => { t.text = document.getElementById('editTaskText').value; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render(); }
+        // Show modal first
+        document.getElementById('editTaskModal').style.display = 'flex'; 
+        // Then pre-fill
+        document.getElementById('editTaskText').value = t.text; 
+        document.getElementById('saveEditTaskBtn').onclick = async () => {
+            t.text = document.getElementById('editTaskText').value; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render();
+        }
     }
     function openEditInvModal(pId, iId) {
         const p=projects.find(x=>x.id===pId); const i=p.invoices.find(x=>x.id.toString()===iId.toString());
-        document.getElementById('editInvLabel').value = i.label; document.getElementById('editInvAmount').value = formatRupiah(i.amount);
-        openModal('editInvModal'); document.getElementById('saveEditInvBtn').onclick = async () => { i.label = document.getElementById('editInvLabel').value; i.amount = document.getElementById('editInvAmount').value.replace(/\./g,''); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); closeModal('editInvModal'); loadAll(true); }
+        // Show modal first
+        document.getElementById('editInvModal').style.display = 'flex';
+        // Then pre-fill
+        document.getElementById('editInvLabel').value = i.label; 
+        document.getElementById('editInvAmount').value = formatRupiah(i.amount);
+        document.getElementById('saveEditInvBtn').onclick = async () => {
+            i.label = document.getElementById('editInvLabel').value; i.amount = document.getElementById('editInvAmount').value.replace(/\./g,'');
+            await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); closeModal('editInvModal'); loadAll(true);
+        }
     }
     function openEditDocModal(id) {
-        const d = documents.find(x => x.id === id); document.getElementById('dName').value = d.doc_name; document.getElementById('dClient').value = d.client; document.getElementById('dStart').value = d.start_date; document.getElementById('dEnd').value = d.end_date || ''; document.getElementById('docModalTitle').innerText = "Edit Dokumen 📄"; document.getElementById('saveDocBtn').onclick = async () => { await sb.from('client_documents').update({ doc_name: document.getElementById('dName').value, client: document.getElementById('dClient').value, start_date: document.getElementById('dStart').value, end_date: document.getElementById('dEnd').value || null }).eq('id', id); closeModal('docModal'); loadAll(); }; document.getElementById('docModal').style.display = 'flex';
+        const d = documents.find(x => x.id === id); 
+        document.getElementById('docModal').style.display = 'flex'; // Show first
+        document.getElementById('dName').value = d.doc_name; 
+        document.getElementById('dClient').value = d.client;
+        document.getElementById('dStart').value = d.start_date; 
+        document.getElementById('dEnd').value = d.end_date || ''; 
+        document.getElementById('docModalTitle').innerText = "Edit Dokumen 📄"; 
+        document.getElementById('saveDocBtn').onclick = async () => {
+            await sb.from('client_documents').update({ doc_name: document.getElementById('dName').value, client: document.getElementById('dClient').value, start_date: document.getElementById('dStart').value, end_date: document.getElementById('dEnd').value || null }).eq('id', id);
+            closeModal('docModal'); loadAll();
+        };
     }
 
     loadAll();
