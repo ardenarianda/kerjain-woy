@@ -12,65 +12,53 @@
             --dark: #0f172a; --gray: #475569; --danger: #dc2626; 
             --warning: #f59e0b; --success: #16a34a; --radius: 12px;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; font-size: 13px; font-weight: 500; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); padding: 20px; font-size: 13px; }
         .container { max-width: 1400px; margin: 0 auto; }
-
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         h1 { font-size: 26px; font-weight: 800; background: var(--primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; }
-
         .view-switcher { display: flex; background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 20px; width: fit-content; }
-        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 12px; color: var(--gray); transition: 0.2s; }
+        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 11px; color: var(--gray); transition: 0.2s; }
         .view-btn.active { background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-
         .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .dashboard-wrapper { grid-template-columns: 220px 1fr 320px; align-items: start; } }
-
         .client-nav { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 10px; }
         @media (min-width: 1024px) { .client-nav { flex-direction: column; position: sticky; top: 20px; } }
         .nav-item { padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; border: 1.5px solid #e2e8f0; background: white; color: var(--gray); white-space: nowrap; }
         .nav-item.active { background: var(--dark); color: white; border-color: var(--dark); }
-
         .workspace { min-width: 0; }
         .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; position: relative; }
         .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
         .card.expanded .card-body { display: block; }
         .inner-content { max-width: 650px; }
-
         .item-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
         .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
         .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; }
-
         .grading-yellow { border-left: 12px solid var(--warning) !important; }
         .grading-red { border-left: 12px solid var(--danger) !important; }
         .grading-complete { border-left: 12px solid var(--success) !important; }
-
         .sidebar { display: flex; flex-direction: column; gap: 20px; }
         .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; border: 1.5px solid #e2e8f0; }
         .clock-box { display: flex; flex-direction: column; align-items: center; background: #0f172a; color: white; border: none; }
         .clock { width: 80px; height: 80px; border: 3px solid white; border-radius: 50%; position: relative; margin-bottom: 10px; }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
         .hour { width: 3px; height: 18px; } .min { width: 2px; height: 28px; } .sec { width: 1px; height: 32px; background: #ef4444; }
-
         .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-p { background: var(--dark); color: white; }
         .btn-ghost { background: #f1f5f9; color: var(--gray); border: 1px solid #e2e8f0; }
         input, textarea { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #e2e8f0; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; }
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
         .pending { background: #fee2e2; color: #991b1b; } .paid { background: #dcfce7; color: #166534; }
-        .lifetime { background: #f0fdf4; color: #166534; } .expired { background: #fef2f2; color: #991b1b; }
-        
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 95%; max-width: 450px; }
         .summary-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid #f1f5f9; }
-        .urgent-item { font-size: 11px; padding: 8px; border-radius: 8px; background: #f8fafc; margin-bottom: 5px; border-left: 4px solid var(--danger); font-weight: 700; }
+        #progress-bar { height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999; }
     </style>
 </head>
 <body>
 
-<div id="progress-bar" style="height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; transition: 0.4s; z-index: 9999;"></div>
+<div id="progress-bar"></div>
 
 <div class="container">
     <header>
@@ -145,9 +133,10 @@
     <input type="text" id="dName" placeholder="Nama Dokumen (NIB, SIUP, dll)">
     <input type="text" id="dClient" placeholder="Punya Client Mana?" style="margin-top:10px">
     <div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">DARI TANGGAL</label><input type="date" id="dStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">EXPIRED (Optional)</label><input type="date" id="dEnd"></div></div>
-    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('docModal')">Batal</button><button class="btn btn-p" onclick="createDoc()">Simpan Berkas</button></div>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('docModal')">Batal</button><button class="btn btn-p" onclick="createDoc()">Gassken!</button></div>
 </div></div>
 
+<!-- Modals Edit -->
 <div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Tugas</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editTaskModal')">Batal</button><button class="btn btn-p" id="saveEditTaskBtn">Update Sip</button></div></div></div>
 <div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:10px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editInvModal')">Batal</button><button class="btn btn-p" id="saveEditInvBtn">Update Sip</button></div></div></div>
 
@@ -158,6 +147,7 @@
 
     let projects = [], documents = [], currentView = 'projects', filterClient = "All Projects", showCompleted = false;
 
+    // Clock
     setInterval(() => {
         const now = new Date();
         document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${now.getSeconds() * 6}deg)`;
@@ -176,14 +166,20 @@
 
     async function loadAll(keepExpanded = false) {
         loader(true);
-        const { data: pData } = await sb.from('projects').select('*').order('created_at', { ascending: false });
-        const { data: dData } = await sb.from('client_documents').select('*').order('created_at', { ascending: false });
-        
-        const currentExp = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
-        projects = (pData || []).map(p => ({ ...p, expanded: currentExp.includes(p.id) }));
-        documents = dData || [];
-        
-        renderNav(); render(); updateSummary();
+        try {
+            const { data: pData, error: pErr } = await sb.from('projects').select('*').order('created_at', { ascending: false });
+            const { data: dData, error: dErr } = await sb.from('client_documents').select('*').order('created_at', { ascending: false });
+            
+            if(pErr || dErr) throw (pErr || dErr);
+
+            const currentExp = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
+            projects = (pData || []).map(p => ({ ...p, expanded: currentExp.includes(p.id) }));
+            documents = dData || [];
+            
+            renderNav(); render(); updateSummary();
+        } catch (e) {
+            console.error("Load Gagal:", e.message);
+        }
         loader(false);
     }
 
@@ -198,12 +194,46 @@
 
     function renderNav() {
         const nav = document.getElementById('clientNav');
-        const clients = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client_name)])].filter(Boolean);
+        const clients = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean);
         nav.innerHTML = clients.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
     }
 
     async function createProject() {
         const name = document.getElementById('pName').value;
         const client = document.getElementById('pClient').value || "No Client";
-        if (!name) return alert("Wajib isi!");
+        if (!name) return alert("Nama wajib!");
         await sb.from('projects').insert([{ name, client, start_date: document.getElementById('pStart').value, end_date: document.getElementById('pEnd').value, tasks: [], invoices: [], is_completed: false }]);
+        closeModal('projectModal'); loadAll();
+    }
+
+    async function createDoc() {
+        const name = document.getElementById('dName').value;
+        const client = document.getElementById('dClient').value || "No Client";
+        if (!name) return alert("Nama berkas wajib!");
+        await sb.from('client_documents').insert([{ doc_name: name, client: client, start_date: document.getElementById('dStart').value, end_date: document.getElementById('dEnd').value }]);
+        closeModal('docModal'); loadAll();
+    }
+
+    function updateSummary() {
+        let totalP = 0, totalN = 0, mPaid = 0, yPaid = 0, alerts = [];
+        const now = new Date();
+        const thisM = now.getMonth(), thisY = now.getFullYear();
+
+        projects.forEach(p => {
+            p.invoices.forEach(i => { 
+                const amt = parseInt(i.amount) || 0;
+                if(i.status === 'Paid') {
+                    totalP += amt;
+                    if(i.paid_at) {
+                        const d = new Date(i.paid_at);
+                        if(d.getMonth() === thisM && d.getFullYear() === thisY) mPaid += amt;
+                        if(d.getFullYear() === thisY) yPaid += amt;
+                    }
+                } else totalN += amt;
+            });
+            if(!p.is_completed && p.reminder_date) {
+                const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000);
+                if(diff <= 10) alerts.push(`<div class="urgent-item">Proj: ${p.name} (${diff <= 0 ? 'OVERDUE' : diff + 'd'})</div>`);
+            }
+        });
+        documents.forEach(d =>
