@@ -20,7 +20,7 @@
         
         /* VIEW SWITCHER */
         .view-switcher { display: flex; background: #e2e8f0; padding: 4px; border-radius: 10px; margin-bottom: 20px; width: fit-content; }
-        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 11px; color: var(--gray); transition: 0.2s; }
+        .view-btn { padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 800; font-size: 12px; color: var(--gray); transition: 0.2s; }
         .view-btn.active { background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
         
         .dashboard-wrapper { display: grid; grid-template-columns: 1fr; gap: 20px; }
@@ -33,16 +33,17 @@
         .daily-grind.expanded .daily-content { display: block; }
         .daily-task-row { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 12px; padding: 10px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1px solid #fde68a; }
 
-        /* CARDS & GROUPING */
+        /* CLIENT NAV (KIRI) */
         .client-nav { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 10px; }
         @media (min-width: 1024px) { .client-nav { flex-direction: column; position: sticky; top: 20px; } }
         .nav-item { padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; border: 1.5px solid #e2e8f0; background: white; color: var(--gray); white-space: nowrap; }
         .nav-item.active { background: var(--dark); color: white; border-color: var(--dark); }
         
-        .client-header { font-size: 11px; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+        /* CARD & GROUPING SYSTEM */
+        .client-header { font-size: 11px; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; margin-top: 10px; cursor: pointer; user-select: none; }
         .client-header::after { content: ""; flex: 1; height: 1.5px; background: #e2e8f0; }
 
-        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; }
+        .card { background: white; border-radius: var(--radius); border: 1.5px solid #e2e8f0; margin-bottom: 12px; overflow: hidden; position: relative; }
         .card-header { padding: 18px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .card-body { display: none; padding: 0 20px 24px 20px; border-top: 1.5px solid #f1f5f9; background: #fcfdfe; }
         .card.expanded .card-body { display: block; }
@@ -51,21 +52,24 @@
         .item-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px; border: 1.5px solid #f1f5f9; font-weight: 600; }
         .inv-row { grid-template-columns: 1.4fr 1.2fr auto auto; }
         
-        /* DOCUMENT ROW */
+        /* DOCUMENT GROUPING STYLES */
+        .doc-group { margin-bottom: 15px; border-radius: var(--radius); border: 1.5px solid transparent; transition: 0.2s; }
+        .doc-group-content { display: none; padding-left: 10px; margin-top: 10px; }
+        .doc-group.expanded .doc-group-content { display: block; }
         .doc-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr auto auto; align-items: center; gap: 15px; padding: 12px 18px; background: white; border-radius: 10px; border: 1.5px solid #e2e8f0; margin-bottom: 8px; position: relative; }
         
         /* GRADING */
         .grading-yellow { border-left: 10px solid var(--warning) !important; }
         .grading-red { border-left: 10px solid var(--danger) !important; }
 
-        /* SIDEBAR */
+        /* SIDEBAR (KANAN) */
         .sidebar-card { background: white; border-radius: var(--radius); padding: 20px; border: 1.5px solid #e2e8f0; margin-bottom: 20px; }
         .clock-box { display: flex; flex-direction: column; align-items: center; background: #0f172a; color: white; border: none; }
         .clock { width: 70px; height: 70px; border: 2px solid white; border-radius: 50%; position: relative; margin-bottom: 10px; }
         .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom; background: white; }
         .hour { width: 3px; height: 15px; } .min { width: 2px; height: 22px; } .sec { width: 1px; height: 26px; background: #ef4444; }
 
-        /* UI ELEMENTS */
+        /* BUTTONS */
         .btn { cursor: pointer; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-p { background: var(--dark); color: white; }
         .btn-ghost { background: #f1f5f9; color: var(--gray); border: 1px solid #e2e8f0; }
@@ -74,7 +78,7 @@
         .status-ok { background: #dcfce7; color: #166534; } 
         .status-expired { background: #fee2e2; color: #991b1b; }
 
-        /* MODAL FIXED */
+        /* MODAL */
         .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.6); z-index: 1000; justify-content:center; align-items:center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 95%; max-width: 450px; }
         .modal-content input { display: block; width: 100%; }
@@ -104,7 +108,7 @@
     <div class="dashboard-wrapper">
         <div class="client-nav" id="clientNav"></div>
         <div class="workspace">
-            <!-- Daily Section -->
+            <!-- Daily Grind Cuy -->
             <div id="dailyGrind" class="daily-grind">
                 <div class="daily-header" onclick="toggleDailySection()">
                     <h3 style="font-weight: 800; color: #92400e;">Kerjaan Harian Cuy! ⚡</h3>
@@ -124,12 +128,10 @@
             <div id="documentList" style="display:none"></div>
         </div>
         <div class="sidebar">
-            <!-- Clock -->
             <div class="sidebar-card clock-box">
                 <div class="clock"><div class="hand hour" id="hourHand"></div><div class="hand min" id="minHand"></div><div class="hand sec" id="secHand"></div></div>
                 <div id="digitalTime" style="font-weight: 800; font-size: 14px;">00:00:00</div>
             </div>
-            <!-- Cuan -->
             <div class="sidebar-card">
                 <div style="font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase;">💰 Cuan Tracker</div>
                 <div class="summary-box">
@@ -193,8 +195,8 @@
     const sb = supabase.createClient(SB_URL, SB_KEY);
 
     let projects = [], documents = [], dailyTasks = [], currentView = 'projects', filterClient = "All Projects", showCompleted = false, dailyExpanded = false;
+    let docGroupsExpanded = {}; // Track expanded state for doc groups per client
 
-    // Clock Animation
     setInterval(() => {
         const d = new Date();
         document.getElementById('secHand').style.transform = `translateX(-50%) rotate(${d.getSeconds()*6}deg)`;
@@ -225,8 +227,8 @@
             const { data: dData } = await sb.from('client_documents').select('*').order('created_at', { ascending: false });
             const { data: dailyData } = await sb.from('daily_tasks').select('*').eq('is_done', false).order('created_at', { ascending: true });
             
-            const expIds = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
-            projects = (pData || []).map(p => ({ ...p, expanded: expIds.includes(p.id) }));
+            const currentExp = keepExpanded ? projects.filter(p => p.expanded).map(p => p.id) : [];
+            projects = (pData || []).map(p => ({ ...p, expanded: currentExp.includes(p.id) }));
             documents = dData || [];
             dailyTasks = dailyData || [];
             
@@ -235,7 +237,6 @@
         loader(false);
     }
 
-    // DAILY TASKS
     async function addDailyTask() {
         const text = document.getElementById('dailyInput').value;
         if(!text) return;
@@ -258,7 +259,6 @@
         `).join('');
     }
 
-    // PROJECTS & DOCS
     async function createProject() {
         const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client";
         if(!n) return alert("Nama wajib!");
@@ -324,7 +324,7 @@
         const grouped = filtered.reduce((acc, p) => { const c = p.client || "No Client"; if(!acc[c]) acc[c] = []; acc[c].push(p); return acc; }, {});
         let html = "";
         for(const client in grouped) {
-            html += `<div class="client-group"><div class="client-header">${client}</div>`;
+            html += `<div class="client-group"><div class="client-header" style="cursor:default">${client}</div>`;
             html += grouped[client].map(p => `
                 <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}">
                     <div class="card-header" onclick="toggleCard('${p.id}')">
@@ -340,6 +340,8 @@
                         <div style="font-size:9px; font-weight:800; color:var(--gray)">💸 INVOICING</div>
                         ${(p.invoices || []).map(i => `<div class="item-row inv-row"><span style="font-weight:700">${i.label}</span><span style="color:#4f46e5; font-weight:800">IDR ${formatRupiah(i.amount)}</span><span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span><div style="display:flex; gap:4px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button></div></div>`).join('')}
                         <div style="display:flex; gap:8px; margin-top:10px"><input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5"><input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><button class="btn btn-p" onclick="addInv('${p.id}')">Save</button></div>
+                        <div style="font-size:9px; font-weight:800; color:var(--gray); margin-top:15px">📝 NOTES</div>
+                        <textarea onblur="sb.from('projects').update({notes:this.value}).eq('id','${p.id}')" placeholder="Catetan di sini...">${p.notes || ''}</textarea>
                         <div style="display:flex; justify-content:space-between; margin-top:20px">
                             <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('projects').delete().eq('id','${p.id}').then(()=>loadAll())">Hapus</button>
                             <button class="btn ${p.is_completed ? 'btn-ghost' : 'btn-p'}" onclick="sb.from('projects').update({is_completed:!${p.is_completed}}).eq('id','${p.id}').then(()=>loadAll())">${p.is_completed?'Buka Lagi':'Beres ✅'}</button>
@@ -351,39 +353,51 @@
         container.innerHTML = html || "<div style='text-align:center; padding:40px; color:gray'>Belum ada project nih.</div>";
     }
 
+    function toggleDocGroup(client) {
+        docGroupsExpanded[client] = !docGroupsExpanded[client];
+        renderDocs();
+    }
+
     function renderDocs() {
         const container = document.getElementById('documentList');
         let filtered = documents;
         if(filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
         
-        // Grouping Docs per Client
         const grouped = filtered.reduce((acc, d) => { const c = d.client || "No Client"; if(!acc[c]) acc[c] = []; acc[c].push(d); return acc; }, {});
         
         let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px"><h3 style="font-weight:800">CLIENT DOCS 📂</h3><button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button></div>`;
         
         for(const client in grouped) {
-            h += `<div class="client-header">${client}</div>`;
-            h += grouped[client].map(d => {
-                const today = new Date().setHours(0,0,0,0);
-                let grading = '', statusTxt = 'Masih Idup', statusCls = 'status-ok';
-                if(d.end_date) {
-                    const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
-                    if(diff <= 30) grading = 'grading-red', statusTxt = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusCls = (diff <= 0 ? 'status-expired' : 'status-ok');
-                    else if(diff <= 60) grading = 'grading-yellow';
-                }
-                return `<div class="doc-row ${grading}">
-                    <div><div style="font-size:8px; color:var(--gray)">DOC</div><b>${d.doc_name}</b></div>
-                    <div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div>
-                    <div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div>
-                    <div><span class="badge ${statusCls}">${statusTxt}</span></div>
-                    <div style="display:flex; gap:5px"><button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div>
-                </div>`;
-            }).join('');
+            const isExp = docGroupsExpanded[client] || false;
+            h += `<div class="doc-group ${isExp ? 'expanded' : ''}">
+                <div class="client-header" onclick="toggleDocGroup('${client}')">
+                    <span>${client}</span>
+                    <span style="font-size:10px; margin-left:auto">${isExp ? '▲' : '▼'}</span>
+                </div>
+                <div class="doc-group-content">
+                    ${grouped[client].map(d => {
+                        const today = new Date().setHours(0,0,0,0);
+                        let grading = '', statusTxt = 'Masih Idup', statusCls = 'status-ok';
+                        if(d.end_date) {
+                            const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
+                            if(diff <= 30) grading = 'grading-red', statusTxt = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusCls = (diff <= 0 ? 'status-expired' : 'status-ok');
+                            else if(diff <= 60) grading = 'grading-yellow';
+                        }
+                        return `<div class="doc-row ${grading}">
+                            <div><div style="font-size:8px; color:var(--gray)">DOC</div><b>${d.doc_name}</b></div>
+                            <div><div style="font-size:8px; color:var(--gray)">CLIENT</div>${d.client}</div>
+                            <div><div style="font-size:8px; color:var(--gray)">VALIDITY</div>${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</div>
+                            <div><span class="badge ${statusCls}">${statusTxt}</span></div>
+                            <div style="display:flex; gap:5px"><button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
         }
         container.innerHTML = h || "<p style='color:gray;text-align:center;padding:40px'>Belum ada dokumen.</p>";
     }
 
-    // HANDLERS
+    // SHARED HANDLERS
     function toggleCard(id) { projects = projects.map(p => ({ ...p, expanded: p.id === id ? !p.expanded : false })); render(); }
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
@@ -397,16 +411,18 @@
         await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); render(); updateSummary(); 
     }
     async function deleteInv(pId, iId) { const p=projects.find(x=>x.id===pId); p.invoices=p.invoices.filter(x=>x.id.toString()!==iId.toString()); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(true); }
+
+    let curE = {};
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
-        document.getElementById('editTaskText').value = t.text;
+        curE = {pId, tId}; document.getElementById('editTaskText').value = t.text;
         openModal('editTaskModal'); document.getElementById('saveEditTaskBtn').onclick = async () => {
             t.text = document.getElementById('editTaskText').value; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render();
         }
     }
     function openEditInvModal(pId, iId) {
         const p=projects.find(x=>x.id===pId); const i=p.invoices.find(x=>x.id.toString()===iId.toString());
-        document.getElementById('editInvLabel').value = i.label; document.getElementById('editInvAmount').value = formatRupiah(i.amount);
+        curE = {pId, iId}; document.getElementById('editInvLabel').value = i.label; document.getElementById('editInvAmount').value = formatRupiah(i.amount);
         openModal('editInvModal'); document.getElementById('saveEditInvBtn').onclick = async () => {
             i.label = document.getElementById('editInvLabel').value; i.amount = document.getElementById('editInvAmount').value.replace(/\./g,'');
             await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); closeModal('editInvModal'); loadAll(true);
