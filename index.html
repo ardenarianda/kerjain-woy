@@ -320,8 +320,11 @@
                         <div style="font-size:9px; font-weight:800; color:var(--gray)">💸 INVOICING</div>
                         ${(p.invoices || []).map(i => `<div class="item-row inv-row"><div class="text-content"><b>${i.label}</b></div><span style="color:#4f46e5; font-weight:800; margin-right:10px">IDR ${formatRupiah(i.amount)}</span><span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span><div style="display:flex;gap:4px;margin-left:10px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button></div></div>`).join('')}
                         <div style="display:flex; gap:8px; margin-top:10px"><input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5"><input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><button class="btn btn-p" onclick="addInv('${p.id}')">Save</button></div>
-                        <div style="font-size:9px; font-weight:800; color:var(--gray); margin:15px 0 5px 0">📝 NOTES</div>
-                        <textarea onblur="(function(el){ const p = projects.find(x => x.id === '${p.id}'); if(p) p.notes = el.value; sb.from('projects').update({notes: el.value}).eq('id', '${p.id}'); })(this)">${p.notes || ''}</textarea>
+                       <div style="font-size:9px; font-weight:800; color:var(--gray); margin:15px 0 5px 0">📝 NOTES</div>
+                        <textarea id="noteIn-${p.id}" placeholder="Tulis catatan project di sini...">${p.notes || ''}</textarea>
+                        <div style="display:flex; justify-content:flex-end; margin-top:5px">
+                            <button class="btn btn-ghost" style="padding:4px 10px; font-size:10px;" onclick="saveProjectNotes('${p.id}')">💾 Simpan Notes</button>
+                        </div>
                         <div style="display:flex; justify-content:space-between; margin-top:20px">
                             <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('projects').delete().eq('id','${p.id}').then(()=>loadAll())">Hapus</button>
                             <button class="btn ${p.is_completed?'btn-ghost':'btn-p'}" onclick="sb.from('projects').update({is_completed:!${p.is_completed}}).eq('id','${p.id}').then(()=>loadAll())">${p.is_completed?'Open':'Complete ✅'}</button>
@@ -369,6 +372,19 @@
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
     async function addTask(pId) { const v=document.getElementById(`tIn-${pId}`).value; if(!v) return; const p=projects.find(x=>x.id===pId); p.tasks.push({id:Date.now(), text:v, done:false}); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); loadAll(true); }
+    async function saveProjectNotes(pId) { const textarea = document.getElementById(`noteIn-${pId}`); if (!textarea) return; const newNotes = textarea.value;
+        // 1. Update data di array lokal 'projects'
+        const p = projects.find(x => x.id === pId);
+        if (p) p.notes = newNotes;
+        // 2. Simpan permanen ke Supabase
+        const { error } = await sb.from('projects').update({ notes: newNotes }).eq('id', pId);
+        if (error) {
+            alert("Gagal simpan notes: " + error.message);
+        } else {
+            // Efek visual feedback sederhana
+            alert("Notes berhasil disimpan! 💾");
+        }
+    }
     async function toggleTask(pId, tId) { const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString()); t.done=!t.done; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render(); }
     async function deleteTask(pId, tId) { const p=projects.find(x=>x.id===pId); p.tasks=p.tasks.filter(x=>x.id.toString()!==tId.toString()); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); render(); }
     async function addInv(pId) { const l=document.getElementById(`iL-${pId}`).value, a=document.getElementById(`iA-${pId}`).value; if(!l||!a) return; const p=projects.find(x=>x.id===pId); p.invoices.push({id:Date.now(), label:l, amount:a.replace(/\./g,''), status:'Pending', paid_at: null}); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(true); }
