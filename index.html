@@ -195,26 +195,36 @@
     }
 
     // DAILY ACTIONS
+    // DAILY ACTIONS
     async function addDailyTask() {
         const textInput = document.getElementById('dailyInput');
         const dateInput = document.getElementById('dailyDate');
-        const text = textInput.value.trim();
-        const dueDate = dateInput.value;
-    
-        // Jika text kosong, stop
+        const text = textInput.value;
+        
         if (!text) return;
     
-        // 1. Ambil valuenya dulu ke variabel, baru RESET FIELD DI AWAL biar cepat & aman
+        // 1. Ambil nilai & langsung reset inputan biar form bersih seketika
+        const dueDate = dateInput.value || null;
         textInput.value = '';
         dateInput.value = '';
     
-        // 2. Kirim ke Supabase
-        const { data, error } = await sb.from('daily_tasks').insert([{ text: text, due_date: dueDate, done: false }]);
-        
+        // 2. Insert ke Supabase menggunakan nama kolom 'task_text' dan 'is_done' (atau hilangkan 'done' jika ada default value di db)
+        const { error } = await sb.from('daily_tasks').insert([{ 
+            task_text: text, 
+            due_date: dueDate,
+            is_done: false 
+        }]);
+    
         if (error) {
-            console.error("Gagal simpan daily task:", error);
-            alert("Gagal menyimpan task: " + error.message);
-            return;
+            // Jika kolomnya di DB ternyata bukan 'is_done' tapi 'done', coba fallback tanpa field boolean
+            const { error: err2 } = await sb.from('daily_tasks').insert([{ 
+                task_text: text, 
+                due_date: dueDate 
+            }]);
+            if (err2) {
+                alert("Gagal simpan: " + err2.message);
+                return;
+            }
         }
     
         // 3. Reload data
