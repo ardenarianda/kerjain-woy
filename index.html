@@ -201,15 +201,23 @@
         const text = textInput.value.trim();
         const dueDate = dateInput.value;
     
+        // Jika text kosong, stop
         if (!text) return;
     
-        // Simpan ke database / state harian kamu
-        await sb.from('daily_tasks').insert([{ text: text, due_date: dueDate, done: false }]);
-    
-        // === TAMBAHKAN DUA BARIS INI UNTUK RESET FIELD ===
+        // 1. Ambil valuenya dulu ke variabel, baru RESET FIELD DI AWAL biar cepat & aman
         textInput.value = '';
         dateInput.value = '';
     
+        // 2. Kirim ke Supabase
+        const { data, error } = await sb.from('daily_tasks').insert([{ text: text, due_date: dueDate, done: false }]);
+        
+        if (error) {
+            console.error("Gagal simpan daily task:", error);
+            alert("Gagal menyimpan task: " + error.message);
+            return;
+        }
+    
+        // 3. Reload data
         loadAll(true);
     }
     async function completeDaily(id) { await sb.from('daily_tasks').update({ is_done: true }).eq('id', id); loadAll(true); }
