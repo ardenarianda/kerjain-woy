@@ -196,8 +196,20 @@
 
     // DAILY ACTIONS
     async function addDailyTask() {
-        const text = document.getElementById('dailyInput').value; if(!text) return;
-        await sb.from('daily_tasks').insert([{ task_text: text, due_date: document.getElementById('dailyDate').value || null }]);
+        const textInput = document.getElementById('dailyInput');
+        const dateInput = document.getElementById('dailyDate');
+        const text = textInput.value.trim();
+        const dueDate = dateInput.value;
+    
+        if (!text) return;
+    
+        // Simpan ke database / state harian kamu
+        await sb.from('daily_tasks').insert([{ text: text, due_date: dueDate, done: false }]);
+    
+        // === TAMBAHKAN DUA BARIS INI UNTUK RESET FIELD ===
+        textInput.value = '';
+        dateInput.value = '';
+    
         loadAll(true);
     }
     async function completeDaily(id) { await sb.from('daily_tasks').update({ is_done: true }).eq('id', id); loadAll(true); }
@@ -291,7 +303,7 @@
                         ${(p.invoices || []).map(i => `<div class="item-row inv-row"><div class="text-content"><b>${i.label}</b></div><span style="color:#4f46e5; font-weight:800; margin-right:10px">IDR ${formatRupiah(i.amount)}</span><span class="badge ${i.status.toLowerCase()}" onclick="toggleInvStatus('${p.id}','${i.id}')">${i.status}</span><div style="display:flex;gap:4px;margin-left:10px"><button class="btn btn-ghost" style="padding:4px 8px" onclick="openEditInvModal('${p.id}','${i.id}')">✎</button><button class="btn btn-ghost" style="padding:4px 8px" onclick="deleteInv('${p.id}','${i.id}')">×</button></div></div>`).join('')}
                         <div style="display:flex; gap:8px; margin-top:10px"><input type="text" id="iL-${p.id}" placeholder="Label" style="flex:1.5"><input type="text" id="iA-${p.id}" placeholder="Nominal" style="flex:1" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><button class="btn btn-p" onclick="addInv('${p.id}')">Save</button></div>
                         <div style="font-size:9px; font-weight:800; color:var(--gray); margin:15px 0 5px 0">📝 NOTES</div>
-                        <textarea onblur="sb.from('projects').update({notes:this.value}).eq('id','${p.id}')">${p.notes || ''}</textarea>
+                        <textarea onblur="(function(el){ const p = projects.find(x => x.id === '${p.id}'); if(p) p.notes = el.value; sb.from('projects').update({notes: el.value}).eq('id', '${p.id}'); })(this)">${p.notes || ''}</textarea>
                         <div style="display:flex; justify-content:space-between; margin-top:20px">
                             <button class="btn btn-ghost" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('projects').delete().eq('id','${p.id}').then(()=>loadAll())">Hapus</button>
                             <button class="btn ${p.is_completed?'btn-ghost':'btn-p'}" onclick="sb.from('projects').update({is_completed:!${p.is_completed}}).eq('id','${p.id}').then(()=>loadAll())">${p.is_completed?'Open':'Complete ✅'}</button>
