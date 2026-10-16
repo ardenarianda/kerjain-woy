@@ -144,7 +144,7 @@
 </div>
 
 <!-- MODALS -->
-<div id="projectModal" class="modal"><div class="modal-content"><h2 style="font-weight:800; margin-bottom:15px">Gassken Project Baru! 🚀</h2><input type="text" id="pName" placeholder="Nama Project"><input type="text" id="pClient" placeholder="Siapa Client-nya?" style="margin-top:10px"><div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">MULAI</label><input type="date" id="pStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">DEADLINE</label><input type="date" id="pEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('projectModal')">Batal</button><button class="btn btn-p" onclick="createProject()">Sikat!</button></div></div></div>
+<div id="projectModal" class="modal"><div class="modal-content"><h2 style="font-weight:800; margin-bottom:15px">Gassken Project Baru! 🚀</h2><input type="text" id="pName" placeholder="Nama Project"><input type="text" id="pClient" placeholder="Siapa Client-nya?" list="clientSuggestions" autocomplete="off" style="margin-top:10px"><datalist id="clientSuggestions"></datalist><div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">MULAI</label><input type="date" id="pStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">DEADLINE</label><input type="date" id="pEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px"><button class="btn btn-ghost" onclick="closeModal('projectModal')">Batal</button><button class="btn btn-p" onclick="createProject()">Sikat!</button></div></div></div>
 <div id="docModal" class="modal"><div class="modal-content"><h2 id="docModalTitle" style="font-weight:800; margin-bottom:15px">Arsip Dokumen 📄</h2><input type="text" id="dName" placeholder="Nama Dokumen"><input type="text" id="dClient" placeholder="Siapa Clientnya?"><div style="display:flex; gap:10px; margin-top:15px"><div style="flex:1"><label style="font-size:9px;font-weight:800">DARI TANGGAL</label><input type="date" id="dStart"></div><div style="flex:1"><label style="font-size:9px;font-weight:800">SAMPAI (Opt)</label><input type="date" id="dEnd"></div></div><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('docModal')">Batal</button><button class="btn btn-p" id="saveDocBtn">Gassken!</button></div></div></div>
 <div id="editTaskModal" class="modal"><div class="modal-content"><h3>Edit Tugas</h3><input type="text" id="editTaskText"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editTaskModal')">Batal</button><button class="btn btn-p" id="saveEditTaskBtn">Update Sip</button></div></div></div>
 <div id="editInvModal" class="modal"><div class="modal-content"><h3>Edit Termin</h3><input type="text" id="editInvLabel" style="margin-bottom:10px"><input type="text" id="editInvAmount" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"><div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('editInvModal')">Batal</button><button class="btn btn-p" id="saveEditInvBtn">Update Sip</button></div></div></div>
@@ -173,6 +173,7 @@
         // Reset input hanya untuk modal Project Baru atau Doc Baru
         if(id === 'projectModal' || id === 'docModal') {
             document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
+            updateClientSuggestions(); // <--- TAMBAHKAN BARIS INI DI SINI
         }
         if(id === 'docModal') { document.getElementById('docModalTitle').innerText = "Arsip Dokumen 📄"; document.getElementById('saveDocBtn').onclick = createDoc; }
         document.getElementById(id).style.display = 'flex'; 
@@ -190,6 +191,7 @@
             projects = (pData || []).map(p => ({ ...p, expanded: currentExp.includes(p.id) }));
             documents = dData || []; dailyTasks = dailyData || [];
             renderNav(); render(); renderDaily(); updateSummary();
+            updateClientSuggestions();
         } catch (e) { console.error(e); }
         loader(false);
     }
@@ -433,7 +435,19 @@
             closeModal('docModal'); loadAll();
         };
     }
-
+    function updateClientSuggestions() {
+        const datalist = document.getElementById('clientSuggestions');
+        if (!datalist) return;
+    
+        // Ambil daftar nama client unik dari project & dokumen
+        const pClients = projects.map(p => p.client).filter(c => c && c !== "No Client");
+        const dClients = documents.map(d => d.client).filter(c => c && c !== "No Client");
+        
+        const uniqueClients = [...new Set([...pClients, ...dClients])].sort();
+    
+        // Generate list option untuk autocomplete
+        datalist.innerHTML = uniqueClients.map(c => `<option value="${c}">`).join('');
+    }
     loadAll();
 </script>
 </body>
