@@ -78,7 +78,6 @@
         #progress-bar { height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; z-index: 9999; }
         .urgent-item { font-size: 11px; padding: 8px; border-radius: 8px; background: #f8fafc; margin-bottom: 5px; border-left: 4px solid var(--danger); font-weight: 700; }
 
-        /* CSS tambahan untuk Auth */
         .user-profile-badge {
             display: flex;
             align-items: center;
@@ -194,7 +193,6 @@
     </div>
 </div>
 
-<!-- AUTH MODAL -->
 <div id="authModal" class="modal" style="display: flex;">
     <div class="modal-content" style="max-width: 380px; text-align: center;">
         <h2 id="authTitle" style="font-weight: 800; margin-bottom: 8px;">Masuk Kerjain Woy! 🚀</h2>
@@ -203,7 +201,7 @@
         <input type="email" id="authEmail" placeholder="Email kamu" style="margin-bottom: 10px;">
         <input type="password" id="authPassword" placeholder="Password (min 6 karakter)" style="margin-bottom: 15px;">
         
-        <button class="btn btn-p" id="authSubmitBtn" onclick="handleAuth(event)" style="width: 100%; justify-content: center; padding: 12px; margin-bottom: 12px;">Login</button>
+        <button class="btn btn-p" id="authSubmitBtn" onclick="handleAuth()" style="width: 100%; justify-content: center; padding: 12px; margin-bottom: 12px;">Login</button>
         
         <div style="font-size: 11px; color: var(--gray);">
             <span id="authToggleText">Belum punya akun?</span>
@@ -212,7 +210,6 @@
     </div>
 </div>
 
-<!-- MODAL EDIT PROJECT BARU -->
 <div id="editProjectModal" class="modal">
     <div class="modal-content">
         <h2 style="font-weight:800; margin-bottom:15px">Edit Project ✏️</h2>
@@ -249,7 +246,6 @@
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
     
-    // MODAL OPENER
     const openModal = (id) => { 
         if(id === 'projectModal' || id === 'docModal') {
             document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
@@ -276,7 +272,6 @@
         loader(false);
     }
 
-    // DAILY ACTIONS
     async function addDailyTask() {
         const textInput = document.getElementById('dailyInput');
         const dateInput = document.getElementById('dailyDate');
@@ -427,6 +422,7 @@
         docGroupsExpanded[client] = !cur; 
         renderDocs(); 
     }
+
     function renderDocs() {
         const container = document.getElementById('documentList');
         let filtered = documents;
@@ -484,7 +480,6 @@
         container.innerHTML = h;
     }
 
-    // SHARED HANDLERS
     function toggleCard(id) { projects = projects.map(p => ({ ...p, expanded: p.id === id ? !p.expanded : false })); render(); }
     function toggleShowCompleted() { showCompleted = !showCompleted; document.getElementById('toggleShowBtn').innerText = showCompleted ? "Hide Done" : "Show Done"; render(); }
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
@@ -542,7 +537,6 @@
         loadAll(); 
     }
 
-    // EDIT MODAL HANDLERS
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
         document.getElementById('editTaskModal').style.display = 'flex'; 
@@ -653,9 +647,7 @@
         document.getElementById('authToggleBtn').innerText = isSignUpMode ? "Login di sini" : "Daftar dulu";
     }
     
-    async function handleAuth(e) {
-        if (e) e.preventDefault(); // Mencegah reload halaman
-        
+    async function handleAuth() {
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
     
