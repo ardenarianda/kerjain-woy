@@ -226,6 +226,31 @@
     </div>
 </div>
 
+<!-- Modal Edit Task -->
+<div id="editTaskModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:800; margin-bottom:15px">Edit Tugas ✏️</h2>
+        <input type="text" id="editTaskText" placeholder="Nama tugas...">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
+            <button class="btn btn-ghost" onclick="closeModal('editTaskModal')">Batal</button>
+            <button class="btn btn-p" id="saveEditTaskBtn">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Termin -->
+<div id="editInvModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:800; margin-bottom:15px">Edit Termin / Invoice 💸</h2>
+        <input type="text" id="editInvLabel" placeholder="Label Invoice (misal: DP 50%)">
+        <input type="text" id="editInvAmount" placeholder="Nominal" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px">
+            <button class="btn btn-ghost" onclick="closeModal('editInvModal')">Batal</button>
+            <button class="btn btn-p" id="saveEditInvBtn">Simpan</button>
+        </div>
+    </div>
+</div>
+    
 <script>
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
