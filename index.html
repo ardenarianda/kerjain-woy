@@ -465,7 +465,7 @@
                             return `<div class="doc-item-card ${gr}">
                                         <div style="flex:1" class="doc-info">
                                             <b>${d.doc_name}</b>
-                                            <span>Validity: ${d.start_date \vert{}\vert{} '-'} to${d.end_date || 'Lifetime'}</span>
+                                            <span>Validity: ${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</span>
                                         </div>
                                         <div><span class="badge ${statusC}">${statusT}</span></div>
                                         <div style="display:flex;gap:4px;margin-left:10px">
