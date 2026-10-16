@@ -477,25 +477,30 @@
         datalist.innerHTML = uniqueClients.map(c => `<option value="${c}">`).join('');
     }
         function selectClient(c) {
-        filterClient = c;
-        
-        // Jika pilih client spesifik (bukan "All Projects")
-        if (c !== "All Projects") {
-            if (currentView === 'projects') {
-                // Auto expand semua project milik client ini
-                projects = projects.map(p => ({
-                    ...p,
-                    expanded: p.client === c ? true : p.expanded
-                }));
+            filterClient = c;
+            
+            if (c === "All Projects") {
+                // 1. Jika pilih All Projects: Collapse (tutup) SEMUA project & dokumen
+                projects = projects.map(p => ({ ...p, expanded: false }));
+                docGroupsExpanded = {};
             } else {
-                // Auto expand grup dokumen milik client ini
-                docGroupsExpanded = { [c]: true };
+                // 2. Jika pilih Client Spesifik:
+                if (currentView === 'projects') {
+                    // Expand HANYA project milik client yang dipilih, sisanya collapse
+                    projects = projects.map(p => ({
+                        ...p,
+                        expanded: p.client === c
+                    }));
+                } else {
+                    // Expand HANYA grup dokumen milik client yang dipilih
+                    docGroupsExpanded = { [c]: true };
+                }
             }
+            
+            // Render ulang UI dan Navigasi sekaligus
+            renderNav();
+            render();
         }
-        
-        renderNav();
-        render();
-    }
     loadAll();
 </script>
 </body>
