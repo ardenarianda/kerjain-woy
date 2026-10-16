@@ -211,7 +211,24 @@
         </div>
     </div>
 </div>
-    
+
+<!-- MODAL EDIT PROJECT BARU -->
+<div id="editProjectModal" class="modal">
+    <div class="modal-content">
+        <h2 style="font-weight:800; margin-bottom:15px">Edit Project ✏️</h2>
+        <input type="text" id="editPName" placeholder="Nama Project">
+        <input type="text" id="editPClient" placeholder="Siapa Client-nya?" list="clientSuggestions" autocomplete="off" style="margin-top:10px">
+        <div style="display:flex; gap:10px; margin-top:15px">
+            <div style="flex:1"><label style="font-size:9px;font-weight:800">MULAI</label><input type="date" id="editPStart"></div>
+            <div style="flex:1"><label style="font-size:9px;font-weight:800">DEADLINE</label><input type="date" id="editPEnd"></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px">
+            <button class="btn btn-ghost" onclick="closeModal('editProjectModal')">Batal</button>
+            <button class="btn btn-p" id="saveEditProjectBtn">Update Sip!</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
@@ -232,12 +249,11 @@
     const loader = (s) => document.getElementById('progress-bar').style.width = s ? '60%' : '0%';
     const formatRupiah = (a) => !a ? "0" : new Intl.NumberFormat('id-ID').format(a);
     
-    // MODAL OPENER (FIX: PRE-FILL)
+    // MODAL OPENER
     const openModal = (id) => { 
-        // Reset input hanya untuk modal Project Baru atau Doc Baru
         if(id === 'projectModal' || id === 'docModal') {
             document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
-            updateClientSuggestions(); // <--- TAMBAHKAN BARIS INI DI SINI
+            updateClientSuggestions();
         }
         if(id === 'docModal') { document.getElementById('docModalTitle').innerText = "Arsip Dokumen 📄"; document.getElementById('saveDocBtn').onclick = createDoc; }
         document.getElementById(id).style.display = 'flex'; 
@@ -260,7 +276,6 @@
         loader(false);
     }
 
-    // DAILY ACTIONS
     // DAILY ACTIONS
     async function addDailyTask() {
         const textInput = document.getElementById('dailyInput');
@@ -372,7 +387,13 @@
             html += grouped[client].map(p => `
                 <div class="card ${p.expanded ? 'expanded' : ''} ${getGrading(p)}">
                     <div class="card-header" onclick="toggleCard('${p.id}')">
-                        <div style="flex:1"><b>${p.is_completed?'✅ ':''}${p.name}</b><br><small style="color:var(--gray)">📅 ${p.start_date || '-'} s/d ${p.end_date || '-'}</small></div>
+                        <div style="flex:1; display:flex; align-items:center; justify-content:space-between; padding-right:15px;">
+                            <div>
+                                <b>${p.is_completed?'✅ ':''}${p.name}</b><br>
+                                <small style="color:var(--gray)">📅 ${p.start_date || '-'} s/d ${p.end_date || '-'}</small>
+                            </div>
+                            <button class="btn btn-ghost" style="padding:4px 8px" onclick="event.stopPropagation(); openEditProjectModal('${p.id}')">✎</button>
+                        </div>
                         <div style="font-size:12px">${p.expanded ? '▲' : '▼'}</div>
                     </div>
                     <div class="card-body"><div class="inner-content">
@@ -402,7 +423,7 @@
 
     function toggleDocGroup(client) { 
         const cur = docGroupsExpanded[client];
-        docGroupsExpanded = {}; // Close others
+        docGroupsExpanded = {}; 
         docGroupsExpanded[client] = !cur; 
         renderDocs(); 
     }
@@ -425,8 +446,59 @@
                             if(diff <= 30) gr = 'grading-red', statusT = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusC = (diff <= 0 ? 'status-expired' : 'status-ok');
                             else if(diff <= 60) gr = 'grading-yellow';
                         }
-                        return `<div class="doc-item-card ${gr}"><div style="flex:1" class="doc-info"><b>${d.doc_name}</b><span>Validity: ${d.start_date || '-'} to ${d.end_date || 'Lifetime'}</span></div><div><span class="badge ${statusC}">${statusT}</span></div><div style="display:flex;gap:4px;margin-left:10px"><button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button><button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button></div></div>`;
-                    }).join('')}</div></div>`;
+                        function renderDocs() {
+    const container = document.getElementById('documentList');
+    let filtered = documents;
+    if (filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
+    
+    const grouped = filtered.reduce((acc, d) => { 
+        const c = d.client || "No Client"; 
+        if (!acc[c]) acc[c] = []; 
+        acc[c].push(d); 
+        return acc; 
+    }, {});
+    
+    const sortedKeys = Object.keys(grouped).sort();
+    let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+                <h3 style="font-weight:800">CLIENT DOCS 📂</h3>
+                <button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button>
+             </div>`;
+             
+    for (const client of sortedKeys) {
+        const isExp = docGroupsExpanded[client] || false;
+        h += `<div class="doc-group ${isExp ? 'expanded' : ''}">
+                <div class="client-header" onclick="toggleDocGroup('${client}')">
+                    <span>${client}</span>
+                    <span style="font-size:10px; margin-left:auto">${isExp ? '▲' : '▼'}</span>
+                </div>
+                <div class="doc-group-content">
+                    ${grouped[client].map(d => {
+                        const today = new Date().setHours(0,0,0,0);
+                        let gr = '', statusT = 'Masih Idup', statusC = 'status-ok';
+                        if (d.end_date) {
+                            const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
+                            if (diff <= 30) {
+                                gr = 'grading-red';
+                                statusT = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup');
+                                statusC = (diff <= 0 ? 'status-expired' : 'status-ok');
+                            } else if (diff <= 60) {
+                                gr = 'grading-yellow';
+                            }
+                        }
+                            return `<div class="doc-item-card ${gr}">
+                                        <div style="flex:1" class="doc-info">
+                                            <b>${d.doc_name}</b>
+                                            <span>Validity: ${d.start_date \vert{}\vert{} '-'} to${d.end_date || 'Lifetime'}</span>
+                                        </div>
+                                        <div><span class="badge ${statusC}">${statusT}</span></div>
+                                        <div style="display:flex;gap:4px;margin-left:10px">
+                                            <button class="btn btn-ghost btn-sm-icon" onclick="openEditDocModal('${d.id}')">✎</button>
+                                            <button class="btn btn-ghost btn-sm-icon" style="color:var(--danger)" onclick="if(confirm('Hapus?')) sb.from('client_documents').delete().eq('id','${d.id}').then(()=>loadAll())">×</button>
+                                        </div>
+                                    </div>`;
+                        }).join('')}
+                    </div>
+                  </div>`;
         }
         container.innerHTML = h;
     }
@@ -437,15 +509,12 @@
     function getGrading(p) { if(p.is_completed) return 'grading-complete'; if(!p.reminder_date) return ''; const diff = Math.ceil((new Date(p.reminder_date) - new Date().setHours(0,0,0,0)) / 86400000); return diff <= 0 ? 'grading-red' : (diff <= 10 ? 'grading-yellow' : ''); }
     async function addTask(pId) { const v=document.getElementById(`tIn-${pId}`).value; if(!v) return; const p=projects.find(x=>x.id===pId); p.tasks.push({id:Date.now(), text:v, done:false}); await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); loadAll(true); }
     async function saveProjectNotes(pId) { const textarea = document.getElementById(`noteIn-${pId}`); if (!textarea) return; const newNotes = textarea.value;
-        // 1. Update data di array lokal 'projects'
         const p = projects.find(x => x.id === pId);
         if (p) p.notes = newNotes;
-        // 2. Simpan permanen ke Supabase
         const { error } = await sb.from('projects').update({ notes: newNotes }).eq('id', pId);
         if (error) {
             alert("Gagal simpan notes: " + error.message);
         } else {
-            // Efek visual feedback sederhana
             alert("Notes berhasil disimpan! 💾");
         }
     }
@@ -462,7 +531,6 @@
         const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client"; 
         if(!n) return alert("Nama wajib!"); 
         
-        // Otomatis masukkan user_id dari user yang sedang login
         await sb.from('projects').insert([{ 
             name: n, 
             client: c, 
@@ -481,7 +549,6 @@
         const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client"; 
         if(!n) return alert("Nama wajib!"); 
         
-        // Otomatis masukkan user_id dari user yang sedang login
         await sb.from('client_documents').insert([{ 
             doc_name: n, 
             client: c, 
@@ -493,13 +560,11 @@
         closeModal('docModal'); 
         loadAll(); 
     }
-    
-    // FIX: PRE-FILL EDIIT
+
+    // EDIT MODAL HANDLERS
     function openEditTaskModal(pId, tId) {
         const p=projects.find(x=>x.id===pId); const t=p.tasks.find(x=>x.id.toString()===tId.toString());
-        // Show modal first
         document.getElementById('editTaskModal').style.display = 'flex'; 
-        // Then pre-fill
         document.getElementById('editTaskText').value = t.text; 
         document.getElementById('saveEditTaskBtn').onclick = async () => {
             t.text = document.getElementById('editTaskText').value; await sb.from('projects').update({tasks:p.tasks}).eq('id',pId); closeModal('editTaskModal'); render();
@@ -507,9 +572,7 @@
     }
     function openEditInvModal(pId, iId) {
         const p=projects.find(x=>x.id===pId); const i=p.invoices.find(x=>x.id.toString()===iId.toString());
-        // Show modal first
         document.getElementById('editInvModal').style.display = 'flex';
-        // Then pre-fill
         document.getElementById('editInvLabel').value = i.label; 
         document.getElementById('editInvAmount').value = formatRupiah(i.amount);
         document.getElementById('saveEditInvBtn').onclick = async () => {
@@ -519,7 +582,7 @@
     }
     function openEditDocModal(id) {
         const d = documents.find(x => x.id === id); 
-        document.getElementById('docModal').style.display = 'flex'; // Show first
+        document.getElementById('docModal').style.display = 'flex'; 
         document.getElementById('dName').value = d.doc_name; 
         document.getElementById('dClient').value = d.client;
         document.getElementById('dStart').value = d.start_date; 
@@ -530,108 +593,136 @@
             closeModal('docModal'); loadAll();
         };
     }
+
+    function openEditProjectModal(pId) {
+        const p = projects.find(x => x.id === pId);
+        if (!p) return;
+
+        updateClientSuggestions();
+        document.getElementById('editProjectModal').style.display = 'flex';
+        document.getElementById('editPName').value = p.name || '';
+        document.getElementById('editPClient').value = p.client || '';
+        document.getElementById('editPStart').value = p.start_date || '';
+        document.getElementById('editPEnd').value = p.end_date || '';
+
+        document.getElementById('saveEditProjectBtn').onclick = async () => {
+            const newName = document.getElementById('editPName').value;
+            const newClient = document.getElementById('editPClient').value || "No Client";
+            const newStart = document.getElementById('editPStart').value;
+            const newEnd = document.getElementById('editPEnd').value;
+
+            if (!newName) return alert("Nama project wajib diisi!");
+
+            loader(true);
+            const { error } = await sb.from('projects').update({
+                name: newName,
+                client: newClient,
+                start_date: newStart,
+                end_date: newEnd
+            }).eq('id', pId);
+
+            loader(false);
+            if (error) {
+                alert("Gagal update project: " + error.message);
+            } else {
+                closeModal('editProjectModal');
+                loadAll(true);
+            }
+        };
+    }
+
     function updateClientSuggestions() {
         const datalist = document.getElementById('clientSuggestions');
         if (!datalist) return;
-    
-        // Ambil nama client, bersihkan spasi liar (trim), dan hilangkan nilai kosong/"No Client"
+
         const pClients = projects.map(p => (p.client || '').trim()).filter(c => c && c !== "No Client");
         const dClients = documents.map(d => (d.client || '').trim()).filter(c => c && c !== "No Client");
         
-        // Gabung dan hilangkan duplikat
         const uniqueClients = [...new Set([...pClients, ...dClients])].sort();
-    
-        // Render ulang opsi
         datalist.innerHTML = uniqueClients.map(c => `<option value="${c}">`).join('');
     }
-        function selectClient(c) {
-            filterClient = c;
-            
-            if (c === "All Projects") {
-                // 1. Jika pilih All Projects: Collapse (tutup) SEMUA project & dokumen
-                projects = projects.map(p => ({ ...p, expanded: false }));
-                docGroupsExpanded = {};
+
+    function selectClient(c) {
+        filterClient = c;
+        if (c === "All Projects") {
+            projects = projects.map(p => ({ ...p, expanded: false }));
+            docGroupsExpanded = {};
+        } else {
+            if (currentView === 'projects') {
+                projects = projects.map(p => ({
+                    ...p,
+                    expanded: p.client === c
+                }));
             } else {
-                // 2. Jika pilih Client Spesifik:
-                if (currentView === 'projects') {
-                    // Expand HANYA project milik client yang dipilih, sisanya collapse
-                    projects = projects.map(p => ({
-                        ...p,
-                        expanded: p.client === c
-                    }));
-                } else {
-                    // Expand HANYA grup dokumen milik client yang dipilih
-                    docGroupsExpanded = { [c]: true };
-                }
+                docGroupsExpanded = { [c]: true };
             }
-            
-            // Render ulang UI dan Navigasi sekaligus
-            renderNav();
+        }
+        renderNav();
+        render();
+    }
+
+    let isSignUpMode = false;
+
+    function toggleAuthMode(e) {
+        if (e) e.preventDefault();
+        isSignUpMode = !isSignUpMode;
+        document.getElementById('authTitle').innerText = isSignUpMode ? "Daftar Akun Baru 🚀" : "Masuk Kerjain Woy! 🚀";
+        document.getElementById('authSubmitBtn').innerText = isSignUpMode ? "Daftar Sekarang" : "Login";
+        document.getElementById('authToggleText').innerText = isSignUpMode ? "Sudah punya akun?" : "Belum punya akun?";
+        document.getElementById('authToggleBtn').innerText = isSignUpMode ? "Login di sini" : "Daftar dulu";
+    }
+    
+    async function handleAuth() {
+        const email = document.getElementById('authEmail').value.trim();
+        const password = document.getElementById('authPassword').value;
+    
+        if (!email || !password) return alert("Email dan password wajib diisi!");
+        if (password.length < 6) return alert("Password minimal 6 karakter!");
+    
+        loader(true);
+        let result;
+    
+        if (isSignUpMode) {
+            result = await sb.auth.signUp({ email, password });
+        } else {
+            result = await sb.auth.signInWithPassword({ email, password });
+        }
+    
+        loader(false);
+    
+        if (result.error) {
+            alert("Gagal: " + result.error.message);
+        } else {
+            if (isSignUpMode && !result.data.session) {
+                alert("Pendaftaran berhasil! Silakan cek email kamu untuk verifikasi sebelum login.");
+            }
+        }
+    }
+    
+    async function handleLogout() {
+        if (confirm("Yakin mau keluar?")) {
+            await sb.auth.signOut();
+        }
+    }
+    
+    function updateAuthUI(user) {
+        currentUser = user;
+        const authModal = document.getElementById('authModal');
+        const userBadge = document.getElementById('userBadge');
+        const userEmailText = document.getElementById('userEmailText');
+    
+        if (user) {
+            if (authModal) authModal.style.display = 'none';
+            if (userBadge) userBadge.style.display = 'flex';
+            if (userEmailText) userEmailText.innerText = user.email;
+        } else {
+            if (authModal) authModal.style.display = 'flex';
+            if (userBadge) userBadge.style.display = 'none';
+            projects = []; documents = []; dailyTasks = [];
             render();
         }
+    }
 
-        let isSignUpMode = false;
-    
-        function toggleAuthMode(e) {
-            if (e) e.preventDefault();
-            isSignUpMode = !isSignUpMode;
-            document.getElementById('authTitle').innerText = isSignUpMode ? "Daftar Akun Baru 🚀" : "Masuk Kerjain Woy! 🚀";
-            document.getElementById('authSubmitBtn').innerText = isSignUpMode ? "Daftar Sekarang" : "Login";
-            document.getElementById('authToggleText').innerText = isSignUpMode ? "Sudah punya akun?" : "Belum punya akun?";
-            document.getElementById('authToggleBtn').innerText = isSignUpMode ? "Login di sini" : "Daftar dulu";
-        }
-        
-        async function handleAuth() {
-            const email = document.getElementById('authEmail').value.trim();
-            const password = document.getElementById('authPassword').value;
-        
-            if (!email || !password) return alert("Email dan password wajib diisi!");
-            if (password.length < 6) return alert("Password minimal 6 karakter!");
-        
-            loader(true);
-            let result;
-        
-            if (isSignUpMode) {
-                result = await sb.auth.signUp({ email, password });
-            } else {
-                result = await sb.auth.signInWithPassword({ email, password });
-            }
-        
-            loader(false);
-        
-            if (result.error) {
-                alert("Gagal: " + result.error.message);
-            } else {
-                if (isSignUpMode && !result.data.session) {
-                    alert("Pendaftaran berhasil! Silakan cek email kamu untuk verifikasi sebelum login.");
-                }
-            }
-        }
-        
-        async function handleLogout() {
-            if (confirm("Yakin mau keluar?")) {
-                await sb.auth.signOut();
-            }
-        }
-        
-        function updateAuthUI(user) {
-            currentUser = user;
-            const authModal = document.getElementById('authModal');
-            const userBadge = document.getElementById('userBadge');
-            const userEmailText = document.getElementById('userEmailText');
-        
-            if (user) {
-                if (authModal) authModal.style.display = 'none';
-                if (userBadge) userBadge.style.display = 'flex';
-                if (userEmailText) userEmailText.innerText = user.email;
-            } else {
-                if (authModal) authModal.style.display = 'flex';
-                if (userBadge) userBadge.style.display = 'none';
-                // Reset data di memori jika logout
-                projects = []; documents = []; dailyTasks = [];
-                render();
-            }
-        }
     sb.auth.onAuthStateChange((event, session) => {
         const user = session ? session.user : null;
         updateAuthUI(user);
@@ -639,7 +730,6 @@
             loadAll();
         }
     });
-      
 </script>
 </body>
 </html>
