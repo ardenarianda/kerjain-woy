@@ -276,7 +276,7 @@
         const nav = document.getElementById('clientNav');
         const cList = ["All Projects", ...new Set([...projects.map(p => p.client), ...documents.map(d => d.client)])].filter(Boolean).sort();
         const finalNavList = ["All Projects", ...cList.filter(c => c !== "All Projects")];
-        nav.innerHTML = finalNavList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="filterClient='${c}'; renderNav(); render();">${c}</div>`).join('');
+        nav.innerHTML = finalNavList.map(c => `<div class="nav-item ${filterClient === c ? 'active' : ''}" onclick="selectClient('${c}')">${c}</div>`).join('');
     }
 
     function switchView(v) {
@@ -475,6 +475,26 @@
     
         // Render ulang opsi
         datalist.innerHTML = uniqueClients.map(c => `<option value="${c}">`).join('');
+    }
+        function selectClient(c) {
+        filterClient = c;
+        
+        // Jika pilih client spesifik (bukan "All Projects")
+        if (c !== "All Projects") {
+            if (currentView === 'projects') {
+                // Auto expand semua project milik client ini
+                projects = projects.map(p => ({
+                    ...p,
+                    expanded: p.client === c ? true : p.expanded
+                }));
+            } else {
+                // Auto expand grup dokumen milik client ini
+                docGroupsExpanded = { [c]: true };
+            }
+        }
+        
+        renderNav();
+        render();
     }
     loadAll();
 </script>
