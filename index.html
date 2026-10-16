@@ -430,61 +430,42 @@
     function renderDocs() {
         const container = document.getElementById('documentList');
         let filtered = documents;
-        if(filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
-        const grouped = filtered.reduce((acc, d) => { const c = d.client || "No Client"; if(!acc[c]) acc[c] = []; acc[c].push(d); return acc; }, {});
+        if (filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
+        
+        const grouped = filtered.reduce((acc, d) => { 
+            const c = d.client || "No Client"; 
+            if (!acc[c]) acc[c] = []; 
+            acc[c].push(d); 
+            return acc; 
+        }, {});
+        
         const sortedKeys = Object.keys(grouped).sort();
-        let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px"><h3 style="font-weight:800">CLIENT DOCS 📂</h3><button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button></div>`;
-        for(const client of sortedKeys) {
+        let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+                    <h3 style="font-weight:800">CLIENT DOCS 📂</h3>
+                    <button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button>
+                 </div>`;
+                 
+        for (const client of sortedKeys) {
             const isExp = docGroupsExpanded[client] || false;
             h += `<div class="doc-group ${isExp ? 'expanded' : ''}">
-                <div class="client-header" onclick="toggleDocGroup('${client}')"><span>${client}</span><span style="font-size:10px; margin-left:auto">${isExp?'▲':'▼'}</span></div>
-                <div class="doc-group-content">${grouped[client].map(d => {
-                        const today = new Date().setHours(0,0,0,0);
-                        let gr = '', statusT = 'Masih Idup', statusC = 'status-ok';
-                        if(d.end_date) {
-                            const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
-                            if(diff <= 30) gr = 'grading-red', statusT = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup'), statusC = (diff <= 0 ? 'status-expired' : 'status-ok');
-                            else if(diff <= 60) gr = 'grading-yellow';
-                        }
-                        function renderDocs() {
-    const container = document.getElementById('documentList');
-    let filtered = documents;
-    if (filterClient !== "All Projects") filtered = documents.filter(d => d.client === filterClient);
-    
-    const grouped = filtered.reduce((acc, d) => { 
-        const c = d.client || "No Client"; 
-        if (!acc[c]) acc[c] = []; 
-        acc[c].push(d); 
-        return acc; 
-    }, {});
-    
-    const sortedKeys = Object.keys(grouped).sort();
-    let h = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
-                <h3 style="font-weight:800">CLIENT DOCS 📂</h3>
-                <button class="btn btn-p" onclick="openModal('docModal')">+ Berkas Baru</button>
-             </div>`;
-             
-    for (const client of sortedKeys) {
-        const isExp = docGroupsExpanded[client] || false;
-        h += `<div class="doc-group ${isExp ? 'expanded' : ''}">
-                <div class="client-header" onclick="toggleDocGroup('${client}')">
-                    <span>${client}</span>
-                    <span style="font-size:10px; margin-left:auto">${isExp ? '▲' : '▼'}</span>
-                </div>
-                <div class="doc-group-content">
-                    ${grouped[client].map(d => {
-                        const today = new Date().setHours(0,0,0,0);
-                        let gr = '', statusT = 'Masih Idup', statusC = 'status-ok';
-                        if (d.end_date) {
-                            const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
-                            if (diff <= 30) {
-                                gr = 'grading-red';
-                                statusT = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup');
-                                statusC = (diff <= 0 ? 'status-expired' : 'status-ok');
-                            } else if (diff <= 60) {
-                                gr = 'grading-yellow';
+                    <div class="client-header" onclick="toggleDocGroup('${client}')">
+                        <span>${client}</span>
+                        <span style="font-size:10px; margin-left:auto">${isExp ? '▲' : '▼'}</span>
+                    </div>
+                    <div class="doc-group-content">
+                        ${grouped[client].map(d => {
+                            const today = new Date().setHours(0,0,0,0);
+                            let gr = '', statusT = 'Masih Idup', statusC = 'status-ok';
+                            if (d.end_date) {
+                                const diff = Math.ceil((new Date(d.end_date) - today) / 86400000);
+                                if (diff <= 30) {
+                                    gr = 'grading-red';
+                                    statusT = (diff <= 0 ? 'Sudah Basi' : 'Masih Idup');
+                                    statusC = (diff <= 0 ? 'status-expired' : 'status-ok');
+                                } else if (diff <= 60) {
+                                    gr = 'grading-yellow';
+                                }
                             }
-                        }
                             return `<div class="doc-item-card ${gr}">
                                         <div style="flex:1" class="doc-info">
                                             <b>${d.doc_name}</b>
