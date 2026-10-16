@@ -269,23 +269,22 @@
         
         if (!text) return;
     
-        // 1. Ambil nilai & langsung reset inputan biar form bersih seketika
         const dueDate = dateInput.value || null;
         textInput.value = '';
         dateInput.value = '';
     
-        // 2. Insert ke Supabase menggunakan nama kolom 'task_text' dan 'is_done' (atau hilangkan 'done' jika ada default value di db)
         const { error } = await sb.from('daily_tasks').insert([{ 
             task_text: text, 
             due_date: dueDate,
-            is_done: false 
+            is_done: false,
+            user_id: currentUser ? currentUser.id : null
         }]);
     
         if (error) {
-            // Jika kolomnya di DB ternyata bukan 'is_done' tapi 'done', coba fallback tanpa field boolean
             const { error: err2 } = await sb.from('daily_tasks').insert([{ 
                 task_text: text, 
-                due_date: dueDate 
+                due_date: dueDate,
+                user_id: currentUser ? currentUser.id : null
             }]);
             if (err2) {
                 alert("Gagal simpan: " + err2.message);
@@ -293,7 +292,6 @@
             }
         }
     
-        // 3. Reload data
         loadAll(true);
     }
     async function completeDaily(id) { await sb.from('daily_tasks').update({ is_done: true }).eq('id', id); loadAll(true); }
@@ -460,8 +458,41 @@
         await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); render(); updateSummary(); 
     }
     async function deleteInv(pId, iId) { const p=projects.find(x=>x.id===pId); p.invoices=p.invoices.filter(x=>x.id.toString()!==iId.toString()); await sb.from('projects').update({invoices:p.invoices}).eq('id',pId); loadAll(true); }
-    async function createProject() { const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client"; if(!n) return alert("Nama wajib!"); await sb.from('projects').insert([{ name:n, client:c, start_date:document.getElementById('pStart').value, end_date:document.getElementById('pEnd').value, tasks:[], invoices:[], is_completed:false }]); closeModal('projectModal'); loadAll(); }
-    async function createDoc() { const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client"; if(!n) return alert("Nama wajib!"); await sb.from('client_documents').insert([{ doc_name:n, client:c, start_date:document.getElementById('dStart').value, end_date:document.getElementById('dEnd').value || null }]); closeModal('docModal'); loadAll(); }
+    async function createProject() { 
+        const n = document.getElementById('pName').value, c = document.getElementById('pClient').value || "No Client"; 
+        if(!n) return alert("Nama wajib!"); 
+        
+        // Otomatis masukkan user_id dari user yang sedang login
+        await sb.from('projects').insert([{ 
+            name: n, 
+            client: c, 
+            start_date: document.getElementById('pStart').value, 
+            end_date: document.getElementById('pEnd').value, 
+            tasks: [], 
+            invoices: [], 
+            is_completed: false,
+            user_id: currentUser ? currentUser.id : null 
+        }]); 
+        
+        closeModal('projectModal'); 
+        loadAll(); 
+    }
+    async function createDoc() { 
+        const n = document.getElementById('dName').value, c = document.getElementById('dClient').value || "No Client"; 
+        if(!n) return alert("Nama wajib!"); 
+        
+        // Otomatis masukkan user_id dari user yang sedang login
+        await sb.from('client_documents').insert([{ 
+            doc_name: n, 
+            client: c, 
+            start_date: document.getElementById('dStart').value, 
+            end_date: document.getElementById('dEnd').value || null,
+            user_id: currentUser ? currentUser.id : null 
+        }]); 
+        
+        closeModal('docModal'); 
+        loadAll(); 
+    }
     
     // FIX: PRE-FILL EDIIT
     function openEditTaskModal(pId, tId) {
