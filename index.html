@@ -203,7 +203,7 @@
         <input type="email" id="authEmail" placeholder="Email kamu" style="margin-bottom: 10px;">
         <input type="password" id="authPassword" placeholder="Password (min 6 karakter)" style="margin-bottom: 15px;">
         
-        <button class="btn btn-p" id="authSubmitBtn" onclick="handleAuth()" style="width: 100%; justify-content: center; padding: 12px; margin-bottom: 12px;">Login</button>
+        <button class="btn btn-p" id="authSubmitBtn" onclick="handleAuth(event)" style="width: 100%; justify-content: center; padding: 12px; margin-bottom: 12px;">Login</button>
         
         <div style="font-size: 11px; color: var(--gray);">
             <span id="authToggleText">Belum punya akun?</span>
@@ -672,7 +672,9 @@
         document.getElementById('authToggleBtn').innerText = isSignUpMode ? "Login di sini" : "Daftar dulu";
     }
     
-    async function handleAuth() {
+    async function handleAuth(e) {
+        if (e) e.preventDefault(); // Mencegah reload halaman
+        
         const email = document.getElementById('authEmail').value.trim();
         const password = document.getElementById('authPassword').value;
     
