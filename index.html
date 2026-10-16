@@ -77,6 +77,19 @@
         .summary-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid #f1f5f9; }
         #progress-bar { height: 3px; background: #4f46e5; position: fixed; top:0; left:0; width:0; z-index: 9999; }
         .urgent-item { font-size: 11px; padding: 8px; border-radius: 8px; background: #f8fafc; margin-bottom: 5px; border-left: 4px solid var(--danger); font-weight: 700; }
+
+        /* CSS tambahan untuk Auth */
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+            font-size: 11px;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
@@ -86,7 +99,11 @@
 <div class="container">
     <header>
         <h1>Kerjain Woy! 🔥</h1>
-        <div style="display:flex; gap:10px">
+        <div style="display:flex; gap:10px; align-items:center;">
+            <div id="userBadge" class="user-profile-badge" style="display:none;">
+                <span id="userEmailText"></span>
+                <button class="btn btn-ghost" onclick="handleLogout()" style="padding:4px 8px; font-size:10px; color:var(--danger)">Logout</button>
+            </div>
             <button class="btn btn-ghost" id="toggleShowBtn" onclick="toggleShowCompleted()">Show Done</button>
             <button class="btn btn-p" onclick="openModal('projectModal')">+ Project Baru</button>
         </div>
@@ -176,6 +193,25 @@
         </div>
     </div>
 </div>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal" style="display: flex;">
+    <div class="modal-content" style="max-width: 380px; text-align: center;">
+        <h2 id="authTitle" style="font-weight: 800; margin-bottom: 8px;">Masuk Kerjain Woy! 🚀</h2>
+        <p style="font-size: 11px; color: var(--gray); margin-bottom: 20px;">Kelola project & tugas kamu dengan rapi.</p>
+        
+        <input type="email" id="authEmail" placeholder="Email kamu" style="margin-bottom: 10px;">
+        <input type="password" id="authPassword" placeholder="Password (min 6 karakter)" style="margin-bottom: 15px;">
+        
+        <button class="btn btn-p" id="authSubmitBtn" onclick="handleAuth()" style="width: 100%; justify-content: center; padding: 12px; margin-bottom: 12px;">Login</button>
+        
+        <div style="font-size: 11px; color: var(--gray);">
+            <span id="authToggleText">Belum punya akun?</span>
+            <a href="#" id="authToggleBtn" onclick="toggleAuthMode(event)" style="color: #6366f1; font-weight: 700; text-decoration: none; margin-left: 4px;">Daftar dulu</a>
+        </div>
+    </div>
+</div>
+    
 <script>
     const SB_URL = "https://zpzsholzfgrgobiahnux.supabase.co"; 
     const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwenNob2x6ZmdyZ29iaWFobnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MDU3ODEsImV4cCI6MjEwMTk4MTc4MX0.NHmyUkUEUrLc_-8hFwiksQDq4fwvR3z2d5W0dTgi5BE"; 
